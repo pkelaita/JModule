@@ -1,0 +1,49 @@
+# compiled source
+target/
+*.class
+
+# packages
+# commit the raw source--git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+
+# Eclipse files
+.classpath
+.project
+.settings/
+*.yaml
+*.yml
+*.config
+*.conf
+*.cfg
+*.properties
+!src/main/resources/log4j.properties
+*.prop
+*.xml
+*.info
+hosts
+root/
+
+# Gradle
+.gradle
+settings.gradle
+gradlew.bat
+gradlew
+/build/
+/bin/
