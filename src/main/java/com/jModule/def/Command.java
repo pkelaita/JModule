@@ -27,16 +27,18 @@ public class Command {
 
 	/**
 	 * Sets the name of the command function (for example, "find" or "grep") and
-	 * inherits parameters from command logic, if any
+	 * inherits parameters from command logic, if any. Sets the default reference
+	 * based on the command's name
 	 * 
 	 * @param name
 	 * @param logic
 	 */
-	public Command(String name, String description, String reference, CommandLogic logic) {
+	public Command(String name, String description, CommandLogic logic) {
 		this.name = name;
 		this.logic = logic;
 		this.description = description;
-		possibleReferences.add(reference);
+		String defaultReference = name.toLowerCase().replaceAll(" ", "");
+		possibleReferences.add(defaultReference);
 		List<String> paramList = logic.getParams();
 
 		if (paramList != null) {
