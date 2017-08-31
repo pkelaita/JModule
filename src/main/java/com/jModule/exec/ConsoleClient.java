@@ -44,6 +44,14 @@ public class ConsoleClient {
 	 *            the module that the help page is specific to
 	 */
 	private void printHelpMessage(Module m) {
+		
+		// if the user has reset the help message, print that message
+		if (m.getHelpReset() != null) {
+			System.out.println(m.getHelpReset());
+			return;
+		}
+		
+		// generate standard help message
 		String message = "\n" + m.getName().toUpperCase() + " -- POSSIBLE COMMANDS";
 		for (Command c : m.getCommands()) {
 			message += "\n'" + c.getDefaultReference() + "'";
@@ -63,6 +71,11 @@ public class ConsoleClient {
 		}
 		message += "\n\nType 'exit' at any time to exit the program";
 		message += "\n";
+		
+		// append message
+		if (m.getHelpAppend() != null) {
+			message += m.getHelpAppend() + "\n";
+		}
 		System.out.println(message);
 	}
 

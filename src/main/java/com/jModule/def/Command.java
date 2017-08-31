@@ -24,6 +24,8 @@ public class Command {
 	private String name;
 	private String description;
 	private String defaultReference;
+	private String usageAppend;
+	private String usageReset;
 	private CommandLogic logic;
 
 	/**
@@ -75,6 +77,13 @@ public class Command {
 	 * @return
 	 */
 	public String getUsage() {
+
+		// if the user has reset the usage info, return that usage info
+		if (usageReset != null) {
+			return usageReset;
+		}
+
+		// generate standard usage info
 		String usage = "Usage: ~$ " + defaultReference;
 		if (params != null) {
 			for (String param : params) {
@@ -83,13 +92,46 @@ public class Command {
 		}
 		if (references != null) {
 			for (String reference : references) {
-				usage += "\n     - OR " + reference;
+				usage += "\n       OR " + reference;
 				if (params != null) {
 					usage += " ~";
 				}
 			}
 		}
+
+		// append info
+		if (usageAppend != null) {
+			usage += "\n" + usageAppend;
+		}
 		return usage;
+	}
+
+	/**
+	 * Adds additional information to the command's usage info
+	 * 
+	 * @param append
+	 *            Information to append to usage
+	 */
+	public void appendUsage(String append) {
+		if (this.usageAppend == null) {
+			this.usageAppend = append;
+		} else {
+			this.usageAppend += "\n" + append;
+		}
+		if (this.usageReset != null) {
+			this.usageReset += "\n" + append;
+		}
+	}
+
+	/**
+	 * Replaces the command's usage info with a given String
+	 * 
+	 * @param reset
+	 *            New usage info to display
+	 */
+	public void resetUsage(String reset) {
+		this.usageReset = reset;
+		this.usageAppend = null;
 	}
 
 	/**

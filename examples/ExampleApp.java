@@ -8,7 +8,7 @@ import com.jModule.exec.Module;
 
 /*
  * The classes in this file serve as an example of how to use the JModule API
- * Note that data referenced and changed by multiple commands is stored in its
+ * Note that data referenced and changed by multiple commands is stored statically in its
  * own class, 'Performance.' This style is reccommended when writing commands
  * that reference shared data.
  */
@@ -20,21 +20,23 @@ public class ExampleApp {
 		// set up commands
 
 		// 'add'
-		ArrayList<String> addParams = new ArrayList<>();
+		AddCmdLogic addLogic = new AddCmdLogic(); // set up command logic
+		ArrayList<String> addParams = new ArrayList<>(); // create parameters
 		addParams.add("first number");
 		addParams.add("second number");
-		AddCmdLogic addLogic = new AddCmdLogic(); // set up logic with parameters
 		addLogic.setParams(addParams); // add parameters to the command logic
 		Command addCmd = new Command("add", "Adds 2 numbers together", addLogic); // set up command with logic
 
 		// 'subtract'
-		ArrayList<String> subtractParams = new ArrayList<>();
+		SubtractCmdLogic subtractLogic = new SubtractCmdLogic(); // set up command logic
+		ArrayList<String> subtractParams = new ArrayList<>(); // create parameters
 		subtractParams.add("first number");
 		subtractParams.add("second number");
-		SubtractCmdLogic subtractLogic = new SubtractCmdLogic(); // set up logic with paramters
 		subtractLogic.setParams(subtractParams); // add parameters to the command logic
 		Command subCmd = new Command("subtract", "Subtracts 2 numbers", subtractLogic); // set up command with logic
 		subCmd.addReference("sub"); // add alternate reference to command
+		subCmd.resetUsage("Usage: the same as above");
+		subCmd.appendUsage("Call this command by typing either 'subtract' or alternatively, 'sub'");
 
 		// 'quizme'
 		Command quizCmd = new Command("quizme", "Tests your knowledge of math", new QuizCmdLogic());
@@ -53,6 +55,7 @@ public class ExampleApp {
 		Module quiz = new Module("quiz");
 		quiz.addCommand(quizCmd);
 		quiz.addCommand(infoCmd);
+		quiz.appendHelpPage("\nWarning: the math quiz problems in this module are very advanced, so proceed with caution");
 
 		// set up and run console application
 		ConsoleClient client = new ConsoleClient("ExampleEducationApp", math); // 'math' is the home module, so it will
@@ -72,7 +75,7 @@ class InfoCmdLogic extends CommandLogic {
 	public void runCommand(String[] args) {
 		System.out.println("Correct answers: " + Performance.getCorrect()); // this references another class used to
 																			// store data
-		System.out.println("Incorrect answers: " + Performance.getIncorrect());
+		System.out.println("Incorrect answers: " + Performance.getIncorrect() + "\n");
 	}
 
 }
