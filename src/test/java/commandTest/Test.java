@@ -3,7 +3,6 @@ package commandTest;
 import java.util.ArrayList;
 
 import com.jModule.def.Command;
-import com.jModule.exec.Module;
 
 public class Test {
 	public static void main(String[] args) {
@@ -30,17 +29,5 @@ public class Test {
 		String returnStr = c1.execute(arguments).toString();
 
 		System.out.println("\nReturns: " + returnStr);
-		
-		// set up module with multiple commands
-		Command c2 = new Command("Command 2", "this is another command", logic);
-		Module module = new Module("Home");
-		module.addCommand(c1);
-		module.addCommand(c2);
-		
-		System.out.println("\n\nModule help message:\n");
-		System.out.println(module.getHelpMessage());
-		
-		System.out.println();
-		System.out.println("Module prompt: " + module.getPrompt());
 	}
 }

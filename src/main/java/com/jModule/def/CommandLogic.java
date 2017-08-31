@@ -8,7 +8,8 @@ import java.util.ArrayList;
  * define the command's logic. After instantiating the specific CommandLogic
  * subclass, you can add and access its parameters.
  * 
- * @author piercekelaita
+ * @author Pierce Kelaita
+ * @version 1.0.0
  *
  */
 public abstract class CommandLogic {
@@ -18,7 +19,8 @@ public abstract class CommandLogic {
 	/**
 	 * This class must be overwritten to define logic for a given command based on
 	 * its arguments. This method can return an object based on the command logic.
-	 * If you do not wish to have any returns, include a null return statement.
+	 * If you do not wish to have return any data, you may include a null return
+	 * statement.
 	 * 
 	 * @param args
 	 * @return result of logic

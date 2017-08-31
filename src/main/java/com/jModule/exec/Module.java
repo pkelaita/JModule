@@ -40,24 +40,6 @@ public class Module {
 		return commands;
 	}
 
-	/**
-	 * Returns a help page with descriptions and usages specific to each command
-	 * 
-	 * @return
-	 */
-	public String getHelpMessage() {
-		String message = "\n" + name.toUpperCase() + " -- POSSIBLE COMMANDS";
-		for (Command c : commands) {
-			message += "\n'" + c.getDefaultReference() + "'";
-			message += "\n\t" + c.getDescription();
-			message += "\n\t" + c.getUsage();
-		}
-		message += "\n'help'";
-		message += "\n\t" + "Displays the help page for the current module.";
-		message += "\n\tUsage: ~$ help\n";
-		return message;
-	}
-
 	public void addCommand(Command c) {
 		commands.add(c);
 	}

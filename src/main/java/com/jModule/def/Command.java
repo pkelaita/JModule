@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class Command {
 
-	private ArrayList<String> alternateReferences = new ArrayList<>();
+	private ArrayList<String> references = new ArrayList<>();
 	private String[] params;
 	private String name;
 	private String description;
@@ -39,7 +39,7 @@ public class Command {
 		this.description = description;
 		this.logic = logic;
 		this.defaultReference = name.toLowerCase().replaceAll(" ", "");
-		
+
 		List<String> paramList = logic.getParams();
 		if (paramList != null) {
 			params = new String[paramList.size()];
@@ -52,32 +52,39 @@ public class Command {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public String getDefaultReference() {
 		return defaultReference;
 	}
 
-	public void addPossibleReference(String reference) {
-		alternateReferences.add(reference);
+	public void addReference(String reference) {
+		references.add(reference);
 	}
-	
+
 	public ArrayList<String> getAltReferences() {
-		return alternateReferences;
+		return references;
 	}
-	
+
 	public String getUsage() {
 		String usage = "Usage: ~$ " + defaultReference;
-		for (String param : params) {
-			usage += " " + "<" + param + ">";
+		if (params != null) {
+			for (String param : params) {
+				usage += " " + "<" + param + ">";
+			}
 		}
 		return usage;
 	}
 
 	public Object execute(String[] args) {
-		return logic.runCommand(args);
+		try {
+			return logic.runCommand(args);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println(getUsage() + "\n");
+			return null;
+		}
 	}
 }
