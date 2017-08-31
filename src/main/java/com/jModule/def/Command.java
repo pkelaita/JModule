@@ -19,10 +19,11 @@ import java.util.*;
  */
 public class Command {
 
-	private ArrayList<String> possibleReferences = new ArrayList<>();
+	private ArrayList<String> alternateReferences = new ArrayList<>();
 	private String[] params;
 	private String name;
 	private String description;
+	private String defaultReference;
 	private CommandLogic logic;
 
 	/**
@@ -35,12 +36,11 @@ public class Command {
 	 */
 	public Command(String name, String description, CommandLogic logic) {
 		this.name = name;
-		this.logic = logic;
 		this.description = description;
-		String defaultReference = name.toLowerCase().replaceAll(" ", "");
-		possibleReferences.add(defaultReference);
+		this.logic = logic;
+		this.defaultReference = name.toLowerCase().replaceAll(" ", "");
+		
 		List<String> paramList = logic.getParams();
-
 		if (paramList != null) {
 			params = new String[paramList.size()];
 			for (int i = 0; i < paramList.size(); i++) {
@@ -57,16 +57,24 @@ public class Command {
 		return description;
 	}
 	
-	public String getUsage() {
-		String usage = "Usage: ~$ " + possibleReferences.get(0);
-		for (String param : params) {
-			usage += " " + param;
-		}
-		return usage;
+	public String getDefaultReference() {
+		return defaultReference;
 	}
 
 	public void addPossibleReference(String reference) {
-		possibleReferences.add(reference);
+		alternateReferences.add(reference);
+	}
+	
+	public ArrayList<String> getAltReferences() {
+		return alternateReferences;
+	}
+	
+	public String getUsage() {
+		String usage = "Usage: ~$ " + defaultReference;
+		for (String param : params) {
+			usage += " " + "<" + param + ">";
+		}
+		return usage;
 	}
 
 	public Object execute(String[] args) {
