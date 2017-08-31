@@ -17,14 +17,12 @@ public abstract class CommandLogic {
 	private ArrayList<String> params;
 
 	/**
-	 * Overwrite this class to define the logic for a command. If you want, the
-	 * command can return data to the class it's called in. If not, make sure to
-	 * add a null return statement.
+	 * Overwrite this class to define the logic for a command.
 	 * 
 	 * @param args
 	 * @return result of logic
 	 */
-	public abstract Object runCommand(String[] args);
+	public abstract void runCommand(String[] args);
 
 	public void setParams(ArrayList<String> params) {
 		this.params = params;

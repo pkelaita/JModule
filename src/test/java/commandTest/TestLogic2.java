@@ -11,12 +11,11 @@ public class TestLogic2 extends CommandLogic {
 	}
 
 	@Override
-	public Object runCommand(String[] args) {
+	public void runCommand(String[] args) {
 		while (true) {
 			System.out.println("\nWho is the sexiest man alive?");
 			if (System.console().readLine().equalsIgnoreCase(answer)) {
 				System.out.println("Correct!");
-				return null;
 			} else {
 				System.out.println("Wrong answer, try again");
 				continue;

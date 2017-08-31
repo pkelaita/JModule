@@ -26,8 +26,7 @@ public class Test {
 		System.out.println("\nExecution:");
 
 		String[] arguments = { "A", "B", "C", };
-		String returnStr = c1.execute(arguments).toString();
+		c1.execute(arguments);
 
-		System.out.println("\nReturns: " + returnStr);
 	}
 }

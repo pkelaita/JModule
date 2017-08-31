@@ -98,12 +98,11 @@ public class Command {
 	 * @param args
 	 * @return any data returned by the command logic, if any
 	 */
-	public Object execute(String[] args) {
-		if (args.length == logic.getParams().size()) {
-			return logic.runCommand(args);
+	public void execute(String[] args) {
+		if ((args.length == 0 && logic.getParams() == null) || (args.length == logic.getParams().size())) {
+			logic.runCommand(args);
 		} else {
 			System.out.println("\n" + getUsage() + "\n");
-			return null;
 		}
 	}
 }

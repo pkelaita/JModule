@@ -53,10 +53,12 @@ public class ConsoleClient {
 		message += "\n'help'";
 		message += "\n\t" + "Displays the help page for the current module.";
 		message += "\n\tUsage: ~$ help\n";
-		message += "\nType the name of another module to switch to that module:";
-		for (Module other : modules) {
-			if (!other.equals(m)) {
-				message += "\n\t- " + "'" + other.getName() + "'";
+		if (modules.size() > 1) {
+			message += "\nType the name of another module to switch to that module:";
+			for (Module other : modules) {
+				if (!other.equals(m)) {
+					message += "\n\t- " + "'" + other.getName() + "'";
+				}
 			}
 		}
 		message += "\n\nType 'exit' at any time to exit the program";
@@ -116,20 +118,22 @@ public class ConsoleClient {
 			boolean found = false;
 			ArrayList<Command> cmds = m.getCommands();
 
-			for (Command modCommand : cmds) {
+			out: for (Command modCommand : cmds) {
 				if (cmd.equals(modCommand.getDefaultReference())) {
 					modCommand.execute(args);
 					found = true;
 					break;
 				}
+				// if no default references found, go through alternate references
 				for (String alt : modCommand.getAltReferences()) {
 					if (cmd.equals(alt)) {
 						modCommand.execute(args);
 						found = true;
-						break;
+						break out;
 					}
 				}
 			}
+
 			if (!found) {
 				System.out.println(
 						"Command '" + cmd + "' not recognized. Use the 'help' command for details on usage.\n");
@@ -139,6 +143,10 @@ public class ConsoleClient {
 
 	public void addModule(Module m) {
 		modules.add(m);
+	}
+
+	public void removeModule(Module m) {
+		modules.remove(m);
 	}
 
 	/**

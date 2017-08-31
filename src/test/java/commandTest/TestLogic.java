@@ -5,7 +5,7 @@ import com.jModule.def.CommandLogic;
 public class TestLogic extends CommandLogic {
 
 	@Override
-	public Object runCommand(String[] args) {
+	public void runCommand(String[] args) {
 		
 		// print paramenters and given arguments
 		int paramNum = super.getParams().size();
@@ -18,7 +18,7 @@ public class TestLogic extends CommandLogic {
 		for (String arg : args) {
 			str += arg;
 		}
-		return str;
+		System.out.println(str);
 	}
 
 }
