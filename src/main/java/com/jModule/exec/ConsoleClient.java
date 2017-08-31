@@ -8,6 +8,9 @@ import com.jModule.def.Command;
 /**
  * Builds and runs a multi-module command line interface.
  * 
+ * Please note: This class takes user input via System.Console() so it cannot
+ * run in a typical development environment
+ * 
  * @author Pierce Kelaita
  * @version 1.0.0
  *
@@ -45,7 +48,7 @@ public class ConsoleClient {
 		for (Command c : m.getCommands()) {
 			message += "\n'" + c.getDefaultReference() + "'";
 			message += "\n\t" + c.getDescription();
-			message += "\n\t" + c.getUsage();
+			message += "\n\t" + c.getUsage().replaceAll("\n", "\n\t");
 		}
 		message += "\n'help'";
 		message += "\n\t" + "Displays the help page for the current module.";
@@ -103,8 +106,7 @@ public class ConsoleClient {
 			// switch to another module
 			for (Module switchTo : modules) {
 				if (cmd.equals(switchTo.getName()) && !cmd.equals(m.getName())) {
-					System.out.println("Switched to module '" + switchTo.getName() + "'");
-					printHelpMessage(switchTo);
+					System.out.println("Switched to module '" + switchTo.getName() + "'\n");
 					return switchTo;
 				}
 			}

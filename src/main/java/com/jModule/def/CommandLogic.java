@@ -3,10 +3,10 @@ package com.jModule.def;
 import java.util.ArrayList;
 
 /**
- * In order to impliment logic into a command, you must write a class extending
- * CommandLogic specific to the given command. Inside this class, you will
- * define the command's logic. After instantiating the specific CommandLogic
- * subclass, you can add and access its parameters.
+ * Classes extending this class can define the logic for commands based on user
+ * input, if given. You can also define the standard parameters for your command
+ * logic. Subclasses of this class are taken as a parameter when instantiating a
+ * command
  * 
  * @author Pierce Kelaita
  * @version 1.0.0
@@ -17,10 +17,9 @@ public abstract class CommandLogic {
 	private ArrayList<String> params;
 
 	/**
-	 * This class must be overwritten to define logic for a given command based on
-	 * its arguments. This method can return an object based on the command logic.
-	 * If you do not wish to have return any data, you may include a null return
-	 * statement.
+	 * Overwrite this class to define the logic for a command. If you want, the
+	 * command can return data to the class it's called in. If not, make sure to
+	 * add a null return statement.
 	 * 
 	 * @param args
 	 * @return result of logic

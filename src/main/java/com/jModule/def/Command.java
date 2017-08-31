@@ -61,14 +61,19 @@ public class Command {
 		return defaultReference;
 	}
 
-	public void addReference(String reference) {
-		references.add(reference);
-	}
-
 	public ArrayList<String> getAltReferences() {
 		return references;
 	}
 
+	public void addReference(String reference) {
+		references.add(reference);
+	}
+
+	/**
+	 * Gives the correct usage in a standard, user-friendly format
+	 * 
+	 * @return
+	 */
 	public String getUsage() {
 		String usage = "Usage: ~$ " + defaultReference;
 		if (params != null) {
@@ -76,14 +81,28 @@ public class Command {
 				usage += " " + "<" + param + ">";
 			}
 		}
+		if (references != null) {
+			for (String reference : references) {
+				usage += "\n     - OR " + reference;
+				if (params != null) {
+					usage += " ~";
+				}
+			}
+		}
 		return usage;
 	}
 
+	/**
+	 * Runs the command logic with the given arguments
+	 * 
+	 * @param args
+	 * @return any data returned by the command logic, if any
+	 */
 	public Object execute(String[] args) {
-		try {
+		if (args.length == logic.getParams().size()) {
 			return logic.runCommand(args);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println(getUsage() + "\n");
+		} else {
+			System.out.println("\n" + getUsage() + "\n");
 			return null;
 		}
 	}
