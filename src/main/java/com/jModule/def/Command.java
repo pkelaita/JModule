@@ -14,7 +14,7 @@ import java.util.*;
  * consult the CommandLogic documentation
  * 
  * @author Pierce Kelaita
- * @version 1.0.0
+ * @version 1.0.1
  *
  */
 public class Command {
@@ -141,10 +141,16 @@ public class Command {
 	 * @return any data returned by the command logic, if any
 	 */
 	public void execute(String[] args) {
-		if ((args.length == 0 && logic.getParams() == null) || (args.length == logic.getParams().size())) {
+		int paramNum;
+		if (params == null) {
+			paramNum = 0;
+		} else {
+			paramNum = params.length;
+		}
+		if (paramNum == args.length) {
 			logic.runCommand(args);
 		} else {
-			System.out.println("\n" + getUsage() + "\n");
+			System.out.println(getUsage() + "\n");
 		}
 	}
 }
