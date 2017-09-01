@@ -1,13 +1,12 @@
 # JModule
 JModule is a simple, lightweight API written to help people easily write clean, organized, and highly customizable command-line applications in Java.
 JModule works by running a console client containing multiple *modules*, each containing their own commands. The application
-user can switch between modules to access their commands and can view a customizable help page for each module. The purpose
-of this design is to organize commands by functionality, leading to an cleaner flow and easier overall user
+user can switch between modules to access their commands and can view a customizable help page for each module. This design allows the developer to organize commands by functionality, leading to an cleaner flow and easier overall user
 experience. 
 
 ## Getting started
 ### Setting up
-In order to use JModule, download `JModule.jar` from the releases page and add the jar to your preferred classpath. JModule contains
+In order to use JModule, download `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule contains
 4 classes and 2 packages, which you'll import into your application and logic classes.
 ```java
 import com.jModule.def.Command;
@@ -46,10 +45,11 @@ class SubtractCmdLogic extends CommandLogic {
 Since this command's logic takes in two parameters, you'll need to define them in an ArrayList and add them with
 `setParams(ArrayList<String> params)` to your instance of your CommandLogic subclass.
 ```java
-SubtractCmdLogic subtractLogic = new SubtractCmdLogic();
 ArrayList<String> subtractParams = new ArrayList<>();
 subtractParams.add("first number");
 subtractParams.add("second number");
+
+SubtractCmdLogic subtractLogic = new SubtractCmdLogic();
 subtractLogic.setParams(subtractParams);
 ```
 Now that we've set up our command logic, we can instantiate a command with a name, description, and our custom logic.
@@ -61,7 +61,7 @@ that can point to the same command if needed.
 ```java
 subCmd.addReference("sub");
 ```
-Now, our 'subtract' command can be called from the console by either typing 'subtract' or 'sub'.
+Now, our `subtract` command can be called from the console by either typing `subtract` or `sub`.
 ```
 ~$ subtract 5 3
 Difference: 2
@@ -71,10 +71,11 @@ Difference: 2
 ```
 
 When commands are executed with an incorrect number of parameters or the module help page is accessed, the command's usage
-information will print to the console. Since we added a few parameters and an alternate reference to our 'add' command, the
+information will print to the console. Since we added a few parameters and an alternate reference to our `subtract` command, the
 generated usage statement will be as follows.
 ```
-Usage: ~$ add <first number> <second number>
+Usage: ~$ subtract <first number> <second number>
+       OR sub ~
 ```
 If we want to change or add to the default usage statement, the method `yourCommand.resetUsage(String reset)` can be used to
 replace the default usage statement with your own statement, and the method `yourCommand.appendUsage(String append)` can be used to add
@@ -119,12 +120,12 @@ Type the name of another module to switch to that module:
 
 Type 'exit' at any time to exit the program
 ```
-The 'help' and 'exit' commands are defined by default and do not need to be defined in your app. Similarly to command usage
+The `help` and `exit` commands are defined by default and do not need to be defined in your app. Similarly to command usage
 staments, module help pages are generated as a standard help page of the style shown above, and can be edited with
-`yourModule.reset(String reset)` and `yourModule.append(String append)`.
+`yourModule.resetHelpPage(String reset)` and `yourModule.appendHelpPage(String append)`.
 
 Now that we've defined our modules, the last step is to implement these modules into a console. This can be accomplished with
-the 'ConsoleClient' class. This class is very easy to instantiate; all you need to do is choose a name and home module that
+the ConsoleClient class. This class is very easy to instantiate; all you need to do is give it a name and home module that
 the application can use as a starting point. From there, we can add additional modules and, finally, run the console
 application.
 ```java
