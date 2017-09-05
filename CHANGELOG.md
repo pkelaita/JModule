@@ -2,6 +2,13 @@
 
 
 ## Version 1.0
+### 1.0.3 - 2017-09-05
+- **Fixed**
+  - Bug when using arrow keys
+- **Issues**
+  - Extra characters printed to CLI when multiple charaters are input in rapid succession (does not affect working command)
+  - Rapid repitition of the delete key causes input stream to block until enter key is pressed
+
 ### 1.0.2 - 2017-09-04
 - **Added**
   - Ability to use backspace key

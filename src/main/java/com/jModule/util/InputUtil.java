@@ -28,44 +28,35 @@ public class InputUtil {
 		boolean readNext = true;
 		boolean byteSequence = false;
 		boolean deleted;
-
 		ArrayList<Character> resultChars = new ArrayList<>();
 
-		/*
-		 * This loop emulates java GUI key watchers - each keystroke is processed as
-		 * either a single byte or a sequence of bytes and is acted on separately.
-		 * In order to do this, it is necessary to toggle to raw input mode for each
-		 * kestroke.
-		 */
 		while (readNext) {
 			ConsoleUtil.setTerminalRawInput();
 			deleted = false;
 
-			// read byte
 			byte curr = (byte) System.in.read();
 			switch (curr) {
 			case '\n': // enter
 				readNext = false;
 				break;
-			case 127: // backspace
-			case 8: // delete
+			case 127: // delete
+			case 8: // delete (num pad)
 				deleted = true;
 				break;
-			case 27:
+			case 27: // esc
 				byteSequence = true;
 			}
 
-			// check last byte of sequence for multi-byte characters
 			if (byteSequence) {
 				boolean endOfSequence = true;
 				switch (curr) {
-				case 65: // up arrow
-				case 66: // down arrow
+				case 65: // ↑
+				case 66: // ↓
 					// TODO implement logic to navigate history
 					break;
-				case 67: // right arrow (disabled)
-				case 68: // left arrow (disabled)
-					// TODO possibly implement logic to move the cursor
+				case 67: // →
+				case 68: // ← 
+					// TODO possibly implement logic to move the cursor left or right
 					break;
 				default:
 					endOfSequence = false;
@@ -76,7 +67,6 @@ public class InputUtil {
 				continue;
 			}
 
-			// add or remove chars from list and print to CLI
 			if (!deleted) {
 				resultChars.add((char) curr);
 				System.out.print(Character.toString((char) curr));
