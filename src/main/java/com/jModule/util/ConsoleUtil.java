@@ -12,14 +12,15 @@ import java.io.InputStream;
  * character) and regular input mode (reading input line by line)
  * 
  * @author Pierce Kelaita
- * @version 1.0.2
+ * @version 1.0.3
  */
 public class ConsoleUtil {
 
 	private static String ttyConfig;
 
 	/**
-	 * Sets terminal to raw input mode
+	 * Sets terminal to raw input mode. You can't run this twice in a row or else
+	 * you'll lock your terminal in raw input mode!
 	 * 
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -42,18 +43,15 @@ public class ConsoleUtil {
 
 	/**
 	 * Execute the stty command with the specified arguments against the current
-	 * active terminal.
+	 * active terminal. Execute the shell command with the result of the ssty and
+	 * return stdOut and stdErr
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @return
 	 */
 	private static String stty(final String args) throws IOException, InterruptedException {
-		String cmd = "stty " + args + " < /dev/tty";
-
-		return exec(new String[] { "sh", "-c", cmd });
-	}
-
-	/**
-	 * Execute the specified command and return the output (both stdout and stderr).
-	 */
-	private static String exec(final String[] cmd) throws IOException, InterruptedException {
+		String[] cmd = { "sh", "-c", "stty " + args + " < /dev/tty" };
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		Process p = Runtime.getRuntime().exec(cmd);
 		InputStream in = p.getInputStream();
@@ -66,5 +64,4 @@ public class ConsoleUtil {
 		String result = new String(bout.toByteArray());
 		return result;
 	}
-
 }

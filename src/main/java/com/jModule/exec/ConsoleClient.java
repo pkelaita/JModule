@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jModule.def.Command;
+import com.jModule.util.ConsoleUtil;
 import com.jModule.util.InputUtil;
 
 /**
@@ -16,7 +17,7 @@ import com.jModule.util.InputUtil;
  * windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.0.2
+ * @version 1.0.3
  *
  */
 public class ConsoleClient {
@@ -146,6 +147,7 @@ public class ConsoleClient {
 				printHelpMessage(m);
 				continue;
 			case "exit":
+				ConsoleUtil.setTerminalRegularInput();
 				System.exit(0);
 			}
 			history.add(args);
