@@ -6,8 +6,8 @@ experience.
 
 ## Getting started
 ### Setting up
-In order to use JModule, download `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule contains
-4 classes and 2 packages, which you'll import into your application and logic classes.
+In order to use JModule, download the latest version of `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule contains
+4 classes and 2 packages that are needed to use the API, which you'll import into your application and logic classes.
 ```java
 import com.jModule.def.Command;
 import com.jModule.def.CommandLogic;
