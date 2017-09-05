@@ -9,7 +9,7 @@ import com.jModule.def.Command;
  * certain function
  * 
  * @author Pierce Kelaita
- * @version 1.0.0
+ * @version 1.0.2
  *
  */
 public class Module {
@@ -27,7 +27,7 @@ public class Module {
 	 */
 	public Module(String name) {
 		this.name = name;
-		this.prompt = name.toLowerCase() + " $ ";
+		this.prompt = name.toLowerCase() + " ";
 	}
 
 	public String getName() {

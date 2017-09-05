@@ -1,18 +1,22 @@
 package com.jModule.exec;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jModule.def.Command;
+import com.jModule.util.InputUtil;
 
 /**
  * Builds and runs a multi-module command line interface.
  * 
- * Please note: This class takes user input via System.Console() so it cannot
- * run in a typical development environment
+ * Please note: This class takes user input by toggling the console between raw
+ * input and regular input mode. As of version 1.0.2, this client only
+ * officially supports *nix terminals. The client has not yet been tested on
+ * windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.0.0
+ * @version 1.0.2
  *
  */
 public class ConsoleClient {
@@ -20,6 +24,11 @@ public class ConsoleClient {
 	private Module home;
 	private String appname;
 	private ArrayList<Module> modules = new ArrayList<>();
+
+	// these variables are not used yet - accessing history will be implemented
+	// in future versions
+	private ArrayList<String[]> history = new ArrayList<>();
+	private boolean historyEnabled = false;
 
 	/**
 	 * Sets the name of the app and the starting module
@@ -37,6 +46,19 @@ public class ConsoleClient {
 	}
 
 	/**
+	 * Sets whether the client will log history of user commands. Deprecated because
+	 * it is not fully ready to be implemented yet, since there is no way to access
+	 * the history yet
+	 * 
+	 * @param enable
+	 *            if true, client will log command history
+	 * @deprecated
+	 */
+	public void setHistoryLoggingEnabled(boolean enable) {
+		this.historyEnabled = enable;
+	}
+
+	/**
 	 * Prints a help page specific to a module. Help pages also reference other
 	 * modules in the console client.
 	 * 
@@ -44,13 +66,12 @@ public class ConsoleClient {
 	 *            the module that the help page is specific to
 	 */
 	private void printHelpMessage(Module m) {
-		
-		// if the user has reset the help message, print that message
+
 		if (m.getHelpReset() != null) {
 			System.out.println(m.getHelpReset());
 			return;
 		}
-		
+
 		// generate standard help message
 		String message = "\n" + m.getName().toUpperCase() + " -- POSSIBLE COMMANDS";
 		for (Command c : m.getCommands()) {
@@ -71,7 +92,7 @@ public class ConsoleClient {
 		}
 		message += "\n\nType 'exit' at any time to exit the program";
 		message += "\n";
-		
+
 		// append message
 		if (m.getHelpAppend() != null) {
 			message += m.getHelpAppend() + "\n";
@@ -81,15 +102,25 @@ public class ConsoleClient {
 
 	/**
 	 * Prints a prompt to the CLI showing the app name and module name and takes in
-	 * user input
+	 * user input using the input utility class.
 	 * 
 	 * @param m
 	 * @return user-given arguments
+	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	private String[] prompt(Module m) {
-		System.out.print(appname + ": " + m.getPrompt());
-		String result = System.console().readLine();
-		result = result.trim().replaceAll(" +", " ");
+	private String[] prompt(Module m) throws IOException, InterruptedException {
+
+		String standPrompt = appname + ": " + m.getPrompt();
+		if (historyEnabled) {
+			standPrompt += history.size() + "$ ";
+		} else {
+			standPrompt += "$ ";
+		}
+
+		System.out.print(standPrompt);
+		String result = InputUtil.readUserInput();
+
 		return result.split(" ");
 	}
 
@@ -99,16 +130,22 @@ public class ConsoleClient {
 	 * 
 	 * @param m
 	 * @return
+	 * @throws InterruptedException
 	 */
-	private Module runModule(Module m) {
+	private Module runModule(Module m) throws InterruptedException {
 		while (true) {
 
 			// prompt for input
-			String[] args = prompt(m);
-			String cmd = args[0];
+			String[] args = null;
+			try {
+				args = prompt(m);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String reference = args[0];
 
 			// command-universal operations
-			switch (cmd) {
+			switch (reference) {
 			case "":
 				continue;
 			case "help":
@@ -117,40 +154,28 @@ public class ConsoleClient {
 			case "exit":
 				System.exit(0);
 			}
+			history.add(args);
 
 			// switch to another module
 			for (Module switchTo : modules) {
-				if (cmd.equals(switchTo.getName()) && !cmd.equals(m.getName())) {
+				if (reference.equals(switchTo.getName()) && !reference.equals(m.getName())) {
 					System.out.println("Switched to module '" + switchTo.getName() + "'\n");
 					return switchTo;
 				}
 			}
 
-			// grab arguments (if given) and find command matching given reference
+			// grab arguments (if given) and check command references
 			args = Arrays.copyOfRange(args, 1, args.length);
-			boolean found = false;
 			ArrayList<Command> cmds = m.getCommands();
 
-			out: for (Command modCommand : cmds) {
-				if (cmd.equals(modCommand.getDefaultReference())) {
-					modCommand.execute(args);
-					found = true;
-					break;
-				}
-				// if no default references found, go through alternate references
-				for (String alt : modCommand.getAltReferences()) {
-					if (cmd.equals(alt)) {
-						modCommand.execute(args);
-						found = true;
-						break out;
-					}
+			for (Command cmd : cmds) {
+				if (reference.equals(cmd.getDefaultReference()) || cmd.getAltReferences().contains(reference)) {
+					cmd.execute(args);
+					return m;
 				}
 			}
-
-			if (!found) {
-				System.out.println(
-						"Command '" + cmd + "' not recognized. Use the 'help' command for details on usage.\n");
-			}
+			System.out.println(
+					"Command '" + reference + "' not recognized. Use the 'help' command for details on usage.\n");
 		}
 	}
 
@@ -167,10 +192,14 @@ public class ConsoleClient {
 	 * module
 	 */
 	public void runConsole() {
-		printHelpMessage(home);
-		Module m = runModule(home);
-		while (true) {
-			m = runModule(m);
+		try {
+			printHelpMessage(home);
+			Module m = runModule(home);
+			while (true) {
+				m = runModule(m);
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }
