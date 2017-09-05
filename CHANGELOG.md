@@ -8,7 +8,7 @@
   - Reads direct user input rather than through System.console()
   - Storing commands in history (deprecated - to be fully implemented in later version)
 - **Removed**
-  - Support for taking user input on windows (runnable but untested) - Will be reimplemented in later version
+  - Support for Windows command line (runnable but untested) - Will be reimplemented in later version
 - **Issues**
   - Bug when using arrow keys
   - Bug when taking user input inside an IDE

@@ -67,11 +67,7 @@ public class Module {
 	 *            Information to append to help page
 	 */
 	public void appendHelpPage(String append) {
-		if (this.helpAppend == null) {
-			this.helpAppend = append;
-		} else {
-			this.helpAppend += "\n" + append;
-		}
+		this.helpAppend = this.helpAppend != null ? "\n" + append : append;
 		if (this.helpReset != null) {
 			this.helpReset += "\n" + append;
 		}

@@ -113,11 +113,7 @@ public class Command {
 	 *            Information to append to usage
 	 */
 	public void appendUsage(String append) {
-		if (this.usageAppend == null) {
-			this.usageAppend = append;
-		} else {
-			this.usageAppend += "\n" + append;
-		}
+		this.usageAppend = this.usageAppend != null ? "\n" + append : append;
 		if (this.usageReset != null) {
 			this.usageReset += "\n" + append;
 		}
@@ -141,16 +137,11 @@ public class Command {
 	 * @return any data returned by the command logic, if any
 	 */
 	public void execute(String[] args) {
-		int paramNum;
-		if (params == null) {
-			paramNum = 0;
-		} else {
-			paramNum = params.length;
-		}
+		int paramNum = params != null ? params.length : 0;
 		if (paramNum == args.length) {
 			logic.runCommand(args);
-		} else {
-			System.out.println(getUsage() + "\n");
+			return;
 		}
+		System.out.println(getUsage() + "\n");
 	}
 }

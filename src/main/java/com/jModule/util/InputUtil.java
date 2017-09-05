@@ -21,7 +21,8 @@ public class InputUtil {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static String readUserInput() throws IOException, InterruptedException {
+	public static String promptUserInput(String prompt) throws IOException, InterruptedException {
+		System.out.print(prompt);
 		boolean readNext = true;
 		boolean deleted;
 		ArrayList<Character> resultChars = new ArrayList<>();
@@ -56,7 +57,6 @@ public class InputUtil {
 		for (char c : resultChars) {
 			result += c;
 		}
-		result = result.trim().replaceAll(" +", " ");
 		ConsoleUtil.setTerminalRegularInput(); // regular input for terminal
 
 		return result;

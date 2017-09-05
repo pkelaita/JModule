@@ -112,14 +112,10 @@ public class ConsoleClient {
 	private String[] prompt(Module m) throws IOException, InterruptedException {
 
 		String standPrompt = appname + ": " + m.getPrompt();
-		if (historyEnabled) {
-			standPrompt += history.size() + "$ ";
-		} else {
-			standPrompt += "$ ";
-		}
+		standPrompt += !historyEnabled ? "$ " : history.size() + "$ ";
 
-		System.out.print(standPrompt);
-		String result = InputUtil.readUserInput();
+		String result = InputUtil.promptUserInput(standPrompt);
+		result = result.trim().replaceAll(" +", " ");
 
 		return result.split(" ");
 	}
@@ -129,19 +125,17 @@ public class ConsoleClient {
 	 * that command with given arguments, if any
 	 * 
 	 * @param m
-	 * @return
+	 *            Current Module
+	 * @return Either current module or module user switches to
 	 * @throws InterruptedException
+	 * @throws IOExceoption
 	 */
-	private Module runModule(Module m) throws InterruptedException {
+	private Module runModule(Module m) throws InterruptedException, IOException {
 		while (true) {
 
 			// prompt for input
 			String[] args = null;
-			try {
-				args = prompt(m);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			args = prompt(m);
 			String reference = args[0];
 
 			// command-universal operations
@@ -198,7 +192,7 @@ public class ConsoleClient {
 			while (true) {
 				m = runModule(m);
 			}
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
 		}
 	}
