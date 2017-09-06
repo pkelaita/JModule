@@ -7,6 +7,9 @@
   - Ability to toggle between commands
 - **Fixed**
   - CLI no longer freezes when toggling through commands
+- **Issues**
+  - SIGNT locks terminal in raw input mode
+  - Prompt string gets reverse wrapped when toggling through history on some command prompts
 
 ## Version 1.0
 ### 1.0.3 - 2017-09-05
