@@ -6,10 +6,10 @@ import java.util.ArrayList;
 /**
  * Represents a possible command. A command can have multiple references, or
  * ways to call it from the command line. For example, a "find" command that can
- * be accessed by typing 'find' or just 'fd' on the command line. A command can
- * also have any number of defined parameters and command-specific logic to
- * process the given parameters.
- * 
+ * be accessed by typing 'find' or just 'fd' on the command line would have 'fd'
+ * as an alternate reference. A command can also have any number of defined
+ * parameters and command-specific logic to process the given parameters.
+ * <P>
  * A command's logic and possible parameters are defined by writing a logic
  * class extending CommandLogic. For more information about CommandLogic,
  * consult the CommandLogic documentation

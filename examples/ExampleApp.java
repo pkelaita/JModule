@@ -20,22 +20,25 @@ public class ExampleApp {
 		// set up commands
 
 		// 'add'
-		AddCmdLogic addLogic = new AddCmdLogic(); // set up command logic
 		ArrayList<String> addParams = new ArrayList<>(); // create parameters
 		addParams.add("first number");
 		addParams.add("second number");
+		
+		AddCmdLogic addLogic = new AddCmdLogic(); // set up command logic
 		addLogic.setParams(addParams); // add parameters to the command logic
 		Command addCmd = new Command("add", "Adds 2 numbers together", addLogic); // set up command with logic
 
 		// 'subtract'
-		SubtractCmdLogic subtractLogic = new SubtractCmdLogic(); // set up command logic
 		ArrayList<String> subtractParams = new ArrayList<>(); // create parameters
 		subtractParams.add("first number");
 		subtractParams.add("second number");
+		
+		SubtractCmdLogic subtractLogic = new SubtractCmdLogic(); // set up command logic
 		subtractLogic.setParams(subtractParams); // add parameters to the command logic
+		
 		Command subCmd = new Command("subtract", "Subtracts 2 numbers", subtractLogic); // set up command with logic
 		subCmd.addReference("sub"); // add alternate reference to command
-		subCmd.resetUsage("Usage: the same as above");
+		subCmd.resetUsage("Usage: the same as above"); // edit usage with resetUsage() and appendUsage()
 		subCmd.appendUsage("Call this command by typing either 'subtract' or alternatively, 'sub'");
 
 		// 'quizme'

@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.1
+### 1.1.0 - 2017-09-06
+- **Added**
+  - Ability to set command logging
+  - Ability to toggle between commands
+- **Fixed**
+  - CLI no longer freezes when toggling through commands
 
 ## Version 1.0
 ### 1.0.3 - 2017-09-05

@@ -17,7 +17,7 @@ import com.jModule.util.InputUtil;
  * windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.0.3
+ * @version 1.1.0
  *
  */
 public class ConsoleClient {
@@ -43,7 +43,8 @@ public class ConsoleClient {
 	}
 
 	/**
-	 * Sets whether the client will log history of user commands.
+	 * Sets whether the client will log history of user commands. This value is set
+	 * to false by default.
 	 * 
 	 * @param enable
 	 *            if true, client will log command history
@@ -166,10 +167,23 @@ public class ConsoleClient {
 		}
 	}
 
+	/**
+	 * Adds a possible module to the client. The user can switch to this module by
+	 * typing its name in the CLI
+	 * 
+	 * @param m
+	 *            Module to add
+	 */
 	public void addModule(Module m) {
 		modules.add(m);
 	}
 
+	/**
+	 * Removes a possible module from the client.
+	 * 
+	 * @param m
+	 *            Module to remove
+	 */
 	public void removeModule(Module m) {
 		modules.remove(m);
 	}

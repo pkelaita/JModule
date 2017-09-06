@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * currently untested on Windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.0.3
+ * @version 1.1.0
  *
  */
 public class InputUtil {

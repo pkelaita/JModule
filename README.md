@@ -24,6 +24,23 @@ own JModule applications.
 
 &nbsp;
 
+## What's New in Version 1.1
+JModule 1.1 now supports an accessible command history. To allow your application's users to access their command history, simply
+define your console client and then use
+```java
+yourClient.setHistoryLoggingEnabled(true);
+````
+When the user runs your app, they will now be able to toggle through their command history by using the &uarr; and &darr; keys. Additionally,
+the CLI prompt will display how many commands are stored in its working history. For example, if the user has run 5 different commands, they
+will see a prompt as such:
+```
+YourAppName: yourmodule 5$ <commands>
+```
+To see the full list of changes implemented in version 1.1, consult the [Changelog](https://github.com/pkelaita/JModule/blob/master/CHANGELOG.md).
+&nbsp;
+
+&nbsp;
+
 ## Writing a JModule application
 ### Defining your commands
 Each JModule command runs based on its own command logic. So before you can create a command, you'll have to create a class
@@ -125,12 +142,14 @@ staments, module help pages are generated as a standard help page of the style s
 `yourModule.resetHelpPage(String reset)` and `yourModule.appendHelpPage(String append)`.
 
 Now that we've defined our modules, the last step is to implement these modules into a console. This can be accomplished with
-the ConsoleClient class. This class is very easy to instantiate; all you need to do is give it a name and home module that
-the application can use as a starting point. From there, we can add additional modules and, finally, run the console
+the ConsoleClient class. This class is very easy to instantiate; all you need to do is give it a name and a home module that
+the application can use as a starting point. From there, we can add additional modules, enable history logging, and finally, run the console
 application.
 ```java
 ConsoleClient client = new ConsoleClient("ExampleEducationApp", math);
 client.addModule(quiz);
+client.setHistoryLoggingEnabled(true);
+
 client.runConsole();
 ```
 To take an in-depth look at the fully implemented example application, `ExampleApp.java` is outfitted with helpful comments
@@ -141,7 +160,6 @@ and defines all its logic classes in the same file for readability.
 
 ## Planned future updates
 * Ability to share data between commands without writing a separate class to store data
-* Accessible command history
 * More flexible parameter options
   * Separate class for parameters
   * Support for indefinite parameters
