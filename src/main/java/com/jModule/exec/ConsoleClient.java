@@ -25,10 +25,6 @@ public class ConsoleClient {
 	private Module home;
 	private String appname;
 	private ArrayList<Module> modules = new ArrayList<>();
-
-	// these variables are not used yet - accessing history will be implemented
-	// in future versions
-	private ArrayList<String[]> history = new ArrayList<>();
 	private boolean historyEnabled = false;
 
 	/**
@@ -47,13 +43,10 @@ public class ConsoleClient {
 	}
 
 	/**
-	 * Sets whether the client will log history of user commands. Deprecated because
-	 * it is not fully ready to be implemented yet, since there is no way to access
-	 * the history yet
+	 * Sets whether the client will log history of user commands.
 	 * 
 	 * @param enable
 	 *            if true, client will log command history
-	 * @deprecated
 	 */
 	public void setHistoryLoggingEnabled(boolean enable) {
 		this.historyEnabled = enable;
@@ -106,6 +99,7 @@ public class ConsoleClient {
 	 * user input using the input utility class.
 	 * 
 	 * @param m
+	 *            Current module
 	 * @return user-given arguments
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -113,9 +107,9 @@ public class ConsoleClient {
 	private String[] prompt(Module m) throws IOException, InterruptedException {
 
 		String standPrompt = appname + ": " + m.getPrompt();
-		standPrompt += !historyEnabled ? "$ " : history.size() + "$ ";
+		standPrompt += !historyEnabled ? "$ " : InputUtil.getHistory().size() + "$ ";
 
-		String result = InputUtil.promptUserInput(standPrompt);
+		String result = InputUtil.promptUserInput(standPrompt, historyEnabled);
 		result = result.trim().replaceAll(" +", " ");
 
 		return result.split(" ");
@@ -126,7 +120,7 @@ public class ConsoleClient {
 	 * that command with given arguments, if any
 	 * 
 	 * @param m
-	 *            Current Module
+	 *            Current module
 	 * @return Either current module or module user switches to
 	 * @throws InterruptedException
 	 * @throws IOExceoption
@@ -134,7 +128,6 @@ public class ConsoleClient {
 	private Module runModule(Module m) throws InterruptedException, IOException {
 		while (true) {
 
-			// prompt for input
 			String[] args = null;
 			args = prompt(m);
 			String reference = args[0];
@@ -150,9 +143,8 @@ public class ConsoleClient {
 				ConsoleUtil.setTerminalRegularInput();
 				System.exit(0);
 			}
-			history.add(args);
+			InputUtil.addHistory(args);
 
-			// switch to another module
 			for (Module switchTo : modules) {
 				if (reference.equals(switchTo.getName()) && !reference.equals(m.getName())) {
 					System.out.println("Switched to module '" + switchTo.getName() + "'\n");
@@ -160,7 +152,6 @@ public class ConsoleClient {
 				}
 			}
 
-			// grab arguments (if given) and check command references
 			args = Arrays.copyOfRange(args, 1, args.length);
 			ArrayList<Command> cmds = m.getCommands();
 

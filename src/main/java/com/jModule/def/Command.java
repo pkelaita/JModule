@@ -1,6 +1,7 @@
 package com.jModule.def;
 
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Represents a possible command. A command can have multiple references, or
@@ -77,8 +78,6 @@ public class Command {
 	 * @return
 	 */
 	public String getUsage() {
-
-		// if the user has reset the usage info, return that usage info
 		if (usageReset != null) {
 			return usageReset;
 		}

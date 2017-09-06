@@ -61,6 +61,7 @@ public class ExampleApp {
 		ConsoleClient client = new ConsoleClient("ExampleEducationApp", math); // 'math' is the home module, so it will
 																				// come up when the program first runs
 		client.addModule(quiz);
+		client.setHistoryLoggingEnabled(true);
 		client.runConsole();
 
 	}
