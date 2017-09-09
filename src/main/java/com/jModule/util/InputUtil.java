@@ -22,13 +22,13 @@ public class InputUtil {
 	private final static byte LEFT_SEQ = 68;
 	private final static byte DELETE = 127;
 
-	private static ArrayList<String[]> history = new ArrayList<>();
+	private static ArrayList<String> history = new ArrayList<>();
 
-	public static ArrayList<String[]> getHistory() {
+	public static ArrayList<String> getHistory() {
 		return history;
 	}
 
-	public static void addHistory(String[] entry) {
+	public static void addHistory(String entry) {
 		history.add(0, entry);
 	}
 
@@ -41,36 +41,21 @@ public class InputUtil {
 	 * @param numChars
 	 * @param prompt
 	 * @return arguments passed at selected history index
+	 * @throws IOException
 	 */
-	private static ArrayList<Character> toggleHistory(int histIndex, int numChars, String prompt) {
+	private static ArrayList<Character> toggleHistory(int histIndex, String prompt) throws IOException {
 		ArrayList<Character> result = new ArrayList<Character>();
 
 		// get args at history index
-		String[] histEntry = history.get(histIndex);
-		for (String cmd : histEntry) {
-			for (int i = 0; i < cmd.length(); i++) {
-				result.add(cmd.charAt(i));
-				numChars++;
-			}
-			result.add(' ');
-			numChars++;
-		}
-		result.remove(result.size() - 1);
-
-		// count and delete chars on line
-		if (histIndex > 0 && history.size() > 1) {
-			String last = "";
-			for (String cmd : history.get(histIndex - 1)) {
-				last += cmd + " ";
-			}
-			last = last.substring(0, last.length() - 1);
-			numChars += last.length();
-		}
-		for (int i = 0; i < numChars; i++) {
-			System.out.print("\b \b");
+		String histEntry = history.get(histIndex);
+		for (int i = 0; i < histEntry.length(); i++) {
+			result.add(histEntry.charAt(i));
 		}
 
 		// print prompt and args at selected index
+		for (int i = 0; i < 1000; i++) {
+			System.out.print("\b \b");
+		}
 		System.out.print(prompt);
 		for (char c : result) {
 			System.out.print(c);
@@ -91,10 +76,9 @@ public class InputUtil {
 	 */
 	public static String promptUserInput(String prompt, boolean historyEnabled)
 			throws IOException, InterruptedException {
-		
+
 		System.out.print(prompt);
-		
-		int numChars = prompt.length();
+
 		int histIndex = -1;
 		boolean readNext = true;
 		boolean byteSequence = false;
@@ -126,14 +110,14 @@ public class InputUtil {
 				case UP_SEQ:
 					if (historyEnabled && histIndex < history.size() - 1) {
 						histIndex++;
-						resultChars = toggleHistory(histIndex, numChars, prompt);
+						resultChars = toggleHistory(histIndex, prompt);
 						replaced = true;
 					}
 					break;
 				case DOWN_SEQ:
 					if (historyEnabled && histIndex > 0) {
 						histIndex--;
-						resultChars = toggleHistory(histIndex, numChars, prompt);
+						resultChars = toggleHistory(histIndex, prompt);
 						replaced = true;
 					}
 					break;
@@ -153,11 +137,9 @@ public class InputUtil {
 			if (!replaced) {
 				if (!deleted) {
 					resultChars.add((char) curr);
-					numChars++;
 					System.out.print(Character.toString((char) curr));
 				} else if (resultChars.size() > 0) {
 					resultChars.remove(resultChars.size() - 1);
-					numChars--;
 					System.out.print("\b \b");
 				}
 			}

@@ -52,6 +52,23 @@ public class ConsoleClient {
 	public void setHistoryLoggingEnabled(boolean enable) {
 		this.historyEnabled = enable;
 	}
+	
+	/**
+	 * Returns a CLI prompt showing the app name and module name and takes in user
+	 * input using the input utility class.
+	 * 
+	 * @param m
+	 *            Current module
+	 * @return user-given arguments
+	 */
+	private String getPrompt(Module m, boolean historyEnabled) {
+
+		String standPrompt = appname + ": " + m.getPrompt();
+		String histIndex = Integer.toString(InputUtil.getHistory().size());
+		standPrompt += !historyEnabled ? "$ " : histIndex + "$ ";
+
+		return standPrompt;
+	}
 
 	/**
 	 * Prints a help page specific to a module. Help pages also reference other
@@ -96,27 +113,6 @@ public class ConsoleClient {
 	}
 
 	/**
-	 * Prints a prompt to the CLI showing the app name and module name and takes in
-	 * user input using the input utility class.
-	 * 
-	 * @param m
-	 *            Current module
-	 * @return user-given arguments
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	private String[] prompt(Module m) throws IOException, InterruptedException {
-
-		String standPrompt = appname + ": " + m.getPrompt();
-		standPrompt += !historyEnabled ? "$ " : InputUtil.getHistory().size() + "$ ";
-
-		String result = InputUtil.promptUserInput(standPrompt, historyEnabled);
-		result = result.trim().replaceAll(" +", " ");
-
-		return result.split(" ");
-	}
-
-	/**
 	 * Finds the command in the module that matches user-given input, and executes
 	 * that command with given arguments, if any
 	 * 
@@ -128,9 +124,17 @@ public class ConsoleClient {
 	 */
 	private Module runModule(Module m) throws InterruptedException, IOException {
 		while (true) {
+			
+			String prompt = getPrompt(m, historyEnabled);
 
-			String[] args = null;
-			args = prompt(m);
+			String result = InputUtil.promptUserInput(prompt, historyEnabled);
+			result = result.trim().replaceAll(" +", " ");
+			if (historyEnabled && result.length() > 0) {
+				InputUtil.addHistory(result);
+			}
+
+			String[] args = result.split(" ");
+
 			String reference = args[0];
 
 			// command-universal operations
@@ -144,7 +148,6 @@ public class ConsoleClient {
 				ConsoleUtil.setTerminalRegularInput();
 				System.exit(0);
 			}
-			InputUtil.addHistory(args);
 
 			for (Module switchTo : modules) {
 				if (reference.equals(switchTo.getName()) && !reference.equals(m.getName())) {
@@ -193,6 +196,16 @@ public class ConsoleClient {
 	 * module
 	 */
 	public void runConsole() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				try {
+					ConsoleUtil.setTerminalRegularInput();
+				} catch (IOException | InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		try {
 			printHelpMessage(home);
 			Module m = runModule(home);
