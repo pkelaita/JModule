@@ -1,6 +1,13 @@
 # Changelog
 
 ## Version 1.1
+### 1.1.1 - 2017-09-09
+- **Fixed**
+  - SIGNT no longer locks terminal in raw input mode
+  - Toggling through history no longer causes reverse wrapping with prompt
+- **Issues**
+  - Extra characters printed to CLI when multiple charaters are input in rapid succession (does not affect working command)
+  - Rapid repitition of the delete key causes input stream to block until enter key is pressed
 ### 1.1.0 - 2017-09-06
 - **Added**
   - Ability to set command logging
