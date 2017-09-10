@@ -46,13 +46,13 @@ public class ConsoleClient {
 	 * Sets whether the client will log history of user commands. This value is set
 	 * to false by default.
 	 * 
-	 * @param enable
+	 * @param historyEnabled
 	 *            if true, client will log command history
 	 */
-	public void setHistoryLoggingEnabled(boolean enable) {
-		this.historyEnabled = enable;
+	public void setHistoryLoggingEnabled(boolean historyEnabled) {
+		this.historyEnabled = historyEnabled;
 	}
-	
+
 	/**
 	 * Returns a CLI prompt showing the app name and module name and takes in user
 	 * input using the input utility class.
@@ -124,10 +124,10 @@ public class ConsoleClient {
 	 */
 	private Module runModule(Module m) throws InterruptedException, IOException {
 		while (true) {
-			
+
 			String prompt = getPrompt(m, historyEnabled);
 
-			String result = InputUtil.promptUserInput(prompt, historyEnabled);
+			String result = InputUtil.promptUserInput(m, prompt, historyEnabled);
 			result = result.trim().replaceAll(" +", " ");
 			if (historyEnabled && result.length() > 0) {
 				InputUtil.addHistory(result);
@@ -207,9 +207,8 @@ public class ConsoleClient {
 			}
 		});
 		try {
-			printHelpMessage(home);
 			Module m = runModule(home);
-			while (true) {
+			while (true) { // main loop
 				m = runModule(m);
 			}
 		} catch (InterruptedException | IOException e) {

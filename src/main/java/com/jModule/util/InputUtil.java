@@ -3,6 +3,9 @@ package com.jModule.util;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.jModule.def.Command;
+import com.jModule.exec.Module;
+
 /**
  * Utility class to process user input on *nix terminals. This class is
  * currently untested on Windows terminals.
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 public class InputUtil {
 
 	private final static byte DELETE_NUMPAD = 8;
+	private final static byte TAB = 9;
 	private final static byte ENTER = 10;
 	private final static byte ESCAPE = 27;
 	private final static byte UP_SEQ = 65;
@@ -33,6 +37,64 @@ public class InputUtil {
 	}
 
 	/**
+	 * Converts a String to an ArrayList of chars
+	 * 
+	 * @param str
+	 *            String to be converted
+	 * @return str as ArrayList
+	 */
+	private static ArrayList<Character> stringToCharList(String str) {
+		ArrayList<Character> result = new ArrayList<>();
+		for (int i = 0; str != null && i < str.length(); i++) {
+			result.add(str.charAt(i));
+		}
+		return result;
+	}
+
+	/**
+	 * Converts an ArrayList of chars to a string
+	 * 
+	 * @param list
+	 *            ArrayList to be converted
+	 * @return list as String
+	 */
+	private static String charListToString(ArrayList<Character> list) {
+		String result = "";
+		for (char c : list) {
+			result += c;
+		}
+		return result;
+	}
+
+	/**
+	 * Clears the line using the optimal number of backspace characters based on
+	 * previously given commands and the characters on the screen
+	 * 
+	 * @param resultChars
+	 *            user-given characters currently on the CLI
+	 * @param prompt
+	 *            module Prompt
+	 */
+	public static void clearLine(ArrayList<Character> resultChars, String prompt) {
+		int[] lengths = new int[history.size() + 1];
+		for (int i = 0; i < history.size(); i++) {
+			lengths[i] = history.get(i).length();
+		}
+		lengths[history.size()] = resultChars.size();
+		int max = Integer.MIN_VALUE;
+		for (int length : lengths) {
+			if (length > max) {
+				max = length;
+			}
+		}
+
+		for (int i = 0; i <= max + prompt.length(); i++) {
+			System.out.print("\b \b");
+		}
+		System.out.print(prompt);
+	}
+
+	/**
 	 * Finds the line that was passed in at a certain history index, deletes the
 	 * current line, and prints the prompt and the passed arguments at that history
 	 * index.
@@ -43,20 +105,16 @@ public class InputUtil {
 	 * @return arguments passed at selected history index
 	 * @throws IOException
 	 */
-	private static ArrayList<Character> toggleHistory(int histIndex, String prompt) throws IOException {
+	private static ArrayList<Character> toggleHistory(int histIndex, String prompt, ArrayList<Character> resultChars)
+			throws IOException {
 		ArrayList<Character> result = new ArrayList<Character>();
 
 		// get args at history index
 		String histEntry = history.get(histIndex);
-		for (int i = 0; i < histEntry.length(); i++) {
-			result.add(histEntry.charAt(i));
-		}
+		result = stringToCharList(histEntry);
 
 		// print prompt and args at selected index
-		for (int i = 0; i < 1000; i++) {
-			System.out.print("\b \b");
-		}
-		System.out.print(prompt);
+		clearLine(resultChars, prompt);
 		for (char c : result) {
 			System.out.print(c);
 		}
@@ -74,16 +132,20 @@ public class InputUtil {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static String promptUserInput(String prompt, boolean historyEnabled)
+	public static String promptUserInput(Module m, String prompt, boolean historyEnabled)
 			throws IOException, InterruptedException {
 
 		System.out.print(prompt);
 
 		int histIndex = -1;
+		int commandIndex = 0;
+		
 		boolean readNext = true;
 		boolean byteSequence = false;
 		boolean deleted;
 		boolean replaced;
+		
+		String temp = null;
 		ArrayList<Character> resultChars = new ArrayList<>();
 
 		while (readNext) {
@@ -92,16 +154,54 @@ public class InputUtil {
 			replaced = false;
 
 			byte curr = (byte) System.in.read();
-			switch (curr) {
-			case ENTER:
-				readNext = false;
-				break;
-			case DELETE:
-			case DELETE_NUMPAD:
-				deleted = true;
-				break;
-			case ESCAPE:
-				byteSequence = true;
+
+			boolean toggling = true;
+			while (toggling) {
+				toggling = false;
+				switch (curr) {
+				case TAB:
+					// grab matching commands based on user input
+					String prefix = charListToString(resultChars);
+					ArrayList<String> matching = new ArrayList<>();
+					for (Command c : m.getCommands()) {
+						if (c.getDefaultReference().startsWith(prefix)) {
+							matching.add(c.getDefaultReference());
+						}
+					}
+
+					// toggle through matching commands, wait for non-tab key and process result
+					while (matching.size() != 0) {
+						ArrayList<Character> tempChars = stringToCharList(temp);
+						clearLine(tempChars, prompt);
+						
+						if (commandIndex >= matching.size()) {
+							commandIndex = 0;
+						}
+						temp = matching.get(commandIndex);
+						commandIndex++;
+						
+						System.out.print(temp);
+						byte next = (byte) System.in.read();
+						
+						resultChars.clear();
+						if (next != TAB) {
+							resultChars = stringToCharList(temp);
+							toggling = true;
+							curr = next;
+							break;
+						}
+					}
+					break;
+				case ENTER:
+					readNext = false;
+					break;
+				case DELETE:
+				case DELETE_NUMPAD:
+					deleted = true;
+					break;
+				case ESCAPE:
+					byteSequence = true;
+				}
 			}
 
 			if (byteSequence) {
@@ -110,20 +210,20 @@ public class InputUtil {
 				case UP_SEQ:
 					if (historyEnabled && histIndex < history.size() - 1) {
 						histIndex++;
-						resultChars = toggleHistory(histIndex, prompt);
+						resultChars = toggleHistory(histIndex, prompt, resultChars);
 						replaced = true;
 					}
 					break;
 				case DOWN_SEQ:
 					if (historyEnabled && histIndex > 0) {
 						histIndex--;
-						resultChars = toggleHistory(histIndex, prompt);
+						resultChars = toggleHistory(histIndex, prompt, resultChars);
 						replaced = true;
 					}
 					break;
 				case RIGHT_SEQ:
 				case LEFT_SEQ:
-					// TODO
+					// unused
 					break;
 				default:
 					endOfSequence = false;
@@ -134,7 +234,7 @@ public class InputUtil {
 				continue;
 			}
 
-			if (!replaced) {
+			if (!replaced && curr != TAB) {
 				if (!deleted) {
 					resultChars.add((char) curr);
 					System.out.print(Character.toString((char) curr));
@@ -147,11 +247,6 @@ public class InputUtil {
 			ConsoleUtil.setTerminalRegularInput();
 		}
 
-		String result = "";
-		for (char c : resultChars) {
-			result += c;
-		}
-
-		return result;
+		return charListToString(resultChars);
 	}
 }

@@ -33,6 +33,14 @@ public class ExampleApp {
 		subtractParams.add("first number");
 		subtractParams.add("second number");
 		
+		// delete this later
+		ArrayList<String> succP = new ArrayList<>();
+		succP.add("deadass");
+		succP.add("b");
+		AddCmdLogic succLogic = new AddCmdLogic();
+		succLogic.setParams(succP);
+		Command succ = new Command("succ", "thiccccc", succLogic);
+		
 		SubtractCmdLogic subtractLogic = new SubtractCmdLogic(); // set up command logic
 		subtractLogic.setParams(subtractParams); // add parameters to the command logic
 		
@@ -54,6 +62,7 @@ public class ExampleApp {
 		Module math = new Module("math");
 		math.addCommand(addCmd);
 		math.addCommand(subCmd);
+		math.addCommand(succ);
 
 		Module quiz = new Module("quiz");
 		quiz.addCommand(quizCmd);
