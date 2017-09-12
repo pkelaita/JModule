@@ -9,14 +9,13 @@ import com.jModule.def.Command;
  * certain function
  * 
  * @author Pierce Kelaita
- * @version 1.0.2
+ * @version 1.2.0
  *
  */
 public class Module {
 
 	private ArrayList<Command> commands = new ArrayList<>();
 	private String name;
-	private String prompt;
 	private String helpAppend;
 	private String helpReset;
 
@@ -26,16 +25,11 @@ public class Module {
 	 * @param name
 	 */
 	public Module(String name) {
-		this.name = name;
-		this.prompt = name.toLowerCase() + " ";
+		this.name = name.toLowerCase();
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public String getPrompt() {
-		return prompt;
 	}
 
 	public ArrayList<Command> getCommands() {
@@ -82,6 +76,22 @@ public class Module {
 	public void resetHelpPage(String reset) {
 		this.helpReset = reset;
 		this.helpAppend = null;
+	}
+
+	/**
+	 * Returns a list with the default reference of each command conatined within
+	 * the module, plus 'help' and 'exit'
+	 * 
+	 * @return references
+	 */
+	public ArrayList<String> getReferences() {
+		ArrayList<String> refs = new ArrayList<>();
+		for (Command c : commands) {
+			refs.add(c.getDefaultReference());
+		}
+		refs.add("help");
+		refs.add("exit");
+		return refs;
 	}
 
 }

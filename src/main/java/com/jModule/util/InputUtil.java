@@ -3,15 +3,12 @@ package com.jModule.util;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.jModule.def.Command;
-import com.jModule.exec.Module;
-
 /**
  * Utility class to process user input on *nix terminals. This class is
  * currently untested on Windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.1.0
+ * @version 1.2.0
  *
  */
 public class InputUtil {
@@ -25,6 +22,17 @@ public class InputUtil {
 	private final static byte RIGHT_SEQ = 67;
 	private final static byte LEFT_SEQ = 68;
 	private final static byte DELETE = 127;
+
+	private static boolean historyEnabled = false;
+	private static boolean tabToggleEnabled = false;
+
+	public static void setHistoryEnabled(boolean enabled) {
+		historyEnabled = enabled;
+	}
+
+	public static void setTabToggleEnabled(boolean enabled) {
+		tabToggleEnabled = enabled;
+	}
 
 	private static ArrayList<String> history = new ArrayList<>();
 
@@ -126,30 +134,28 @@ public class InputUtil {
 	 * Takes in user input and prints result of each character. Currently able to
 	 * process all standard chars plus 'enter' and 'backspace' keystrokes.
 	 * 
-	 * TODO process arrow keys, fix bug with arrow keys affecting CLI
-	 * 
 	 * @return result of user input
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static String promptUserInput(Module m, String prompt, boolean historyEnabled)
+	public static String promptUserInput(ArrayList<String> commandReferences, String prompt)
 			throws IOException, InterruptedException {
+		ConsoleUtil.setTerminalRawInput();
 
 		System.out.print(prompt);
 
 		int histIndex = -1;
 		int commandIndex = 0;
-		
+
 		boolean readNext = true;
 		boolean byteSequence = false;
 		boolean deleted;
 		boolean replaced;
-		
+
 		String temp = null;
 		ArrayList<Character> resultChars = new ArrayList<>();
 
 		while (readNext) {
-			ConsoleUtil.setTerminalRawInput();
 			deleted = false;
 			replaced = false;
 
@@ -160,12 +166,15 @@ public class InputUtil {
 				toggling = false;
 				switch (curr) {
 				case TAB:
+					if (!tabToggleEnabled) {
+						break;
+					}
 					// grab matching commands based on user input
 					String prefix = charListToString(resultChars);
 					ArrayList<String> matching = new ArrayList<>();
-					for (Command c : m.getCommands()) {
-						if (c.getDefaultReference().startsWith(prefix)) {
-							matching.add(c.getDefaultReference());
+					for (String reference : commandReferences) {
+						if (reference.startsWith(prefix)) {
+							matching.add(reference);
 						}
 					}
 
@@ -173,16 +182,16 @@ public class InputUtil {
 					while (matching.size() != 0) {
 						ArrayList<Character> tempChars = stringToCharList(temp);
 						clearLine(tempChars, prompt);
-						
+
 						if (commandIndex >= matching.size()) {
 							commandIndex = 0;
 						}
 						temp = matching.get(commandIndex);
 						commandIndex++;
-						
+
 						System.out.print(temp);
 						byte next = (byte) System.in.read();
-						
+
 						resultChars.clear();
 						if (next != TAB) {
 							resultChars = stringToCharList(temp);
@@ -230,7 +239,6 @@ public class InputUtil {
 				}
 
 				byteSequence = !endOfSequence;
-				ConsoleUtil.setTerminalRegularInput();
 				continue;
 			}
 
@@ -243,10 +251,9 @@ public class InputUtil {
 					System.out.print("\b \b");
 				}
 			}
-
-			ConsoleUtil.setTerminalRegularInput();
 		}
 
+		ConsoleUtil.setTerminalRegularInput();
 		return charListToString(resultChars);
 	}
 }

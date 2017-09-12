@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * consult the CommandLogic documentation
  * 
  * @author Pierce Kelaita
- * @version 1.0.1
+ * @version 1.2.0
  *
  */
 public class Command {
@@ -133,7 +133,6 @@ public class Command {
 	 * Runs the command logic with the given arguments
 	 * 
 	 * @param args
-	 * @return any data returned by the command logic, if any
 	 */
 	public void execute(String[] args) {
 		int paramNum = params != null ? params.length : 0;

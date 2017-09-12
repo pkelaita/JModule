@@ -17,15 +17,19 @@ import com.jModule.util.InputUtil;
  * windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.1.0
+ * @version 1.2.0
  *
  */
 public class ConsoleClient {
 
 	private Module home;
 	private String appname;
+	private String promptSeparator = "$";
+	private String moduleSeparator = ": ";
+	private String promptName = null;
 	private ArrayList<Module> modules = new ArrayList<>();
 	private boolean historyEnabled = false;
+	private boolean historyIndexDisplay = false;
 
 	/**
 	 * Sets the name of the app and the starting module
@@ -43,14 +47,99 @@ public class ConsoleClient {
 	}
 
 	/**
+	 * Sets the character(s) that will come up at the end of the prompt on the CLI
+	 * to separate the prompt from the user input. By default, this separator is
+	 * "$". A space will automatically be printed after this separator on the CLI.
+	 * <P>
+	 * The following examples show two prompts with the same settings but different
+	 * prompt seprators:
+	 * <P>
+	 *
+	 * <code>AppName: module$</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- separator is set to
+	 * <code>"$"</code> (default setting) <br>
+	 * <code>AppName: module></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- separator is
+	 * set to <code>">"</code> <br>
+	 * <code>AppName: module ></code> &nbsp;&nbsp;&nbsp;- separator is set to
+	 * <code>" >"</code>
+	 * 
+	 * @param separator
+	 */
+	public void setPromptSeparator(String separator) {
+		this.promptSeparator = separator;
+	}
+
+	/**
+	 * Sets the character(s) that will be shown between the app name and the module
+	 * in the prompt display. By default, this separator is ": " - a colon with a
+	 * space after it. Be advised that this separator will only be displayed if the
+	 * client has multiple modules.
+	 * <P>
+	 * The following examples show two prompts with the same settings but different
+	 * module seprators:
+	 * <P>
+	 * 
+	 * <code>AppName: module 0$</code> &nbsp;&nbsp;&nbsp;- separator is set to
+	 * <code>": "</code> (default setting) <br>
+	 * <code>AppName/ module 0$</code> &nbsp;&nbsp;&nbsp;- separator is set to
+	 * <code>"/ "</code> <br>
+	 * <code>AppName/module 0$</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- separator is
+	 * set to <code>"/"</code>
+	 * 
+	 * @param separator
+	 */
+	public void setModuleSeparator(String separator) {
+		this.moduleSeparator = separator;
+	}
+
+	/**
 	 * Sets whether the client will log history of user commands. This value is set
 	 * to false by default.
 	 * 
 	 * @param historyEnabled
 	 *            if true, client will log command history
 	 */
-	public void setHistoryLoggingEnabled(boolean historyEnabled) {
-		this.historyEnabled = historyEnabled;
+	public void setHistoryLoggingEnabled(boolean enabled) {
+		this.historyEnabled = enabled;
+		InputUtil.setHistoryEnabled(enabled);
+	}
+
+	/**
+	 * Sets whether the client will display the history index in the prompt. This
+	 * can only be enabled if history logging is enabled and is set to false by
+	 * default.
+	 * 
+	 * @param enabled
+	 *            if true, client will display history index in prompt
+	 */
+	public void setHistoryIndexDisplayEnabled(boolean enabled) {
+		if (!historyEnabled) {
+			throw new IllegalArgumentException(
+					"In order to enable history index display, console client must have history logging enabled!");
+		} else {
+			this.historyIndexDisplay = enabled;
+		}
+	}
+
+	/**
+	 * Sets whether the client will be able to toggle through command history using
+	 * the tab key
+	 * 
+	 * @param historyEnabled
+	 *            if true, client will log command history
+	 */
+	public void setTabToggleEnabled(boolean enabled) {
+		InputUtil.setTabToggleEnabled(enabled);
+	}
+
+	/**
+	 * Sets the app name that will show on the prompt display. By default, this value
+	 * is null, and the prompt display shows the user-given app name with its spaces
+	 * removed.
+	 * 
+	 * @param name
+	 */
+	public void setPromptDisplayName(String name) {
+		this.promptName = name;
 	}
 
 	/**
@@ -61,11 +150,18 @@ public class ConsoleClient {
 	 *            Current module
 	 * @return user-given arguments
 	 */
-	private String getPrompt(Module m, boolean historyEnabled) {
+	private String getPrompt(Module m) {
+		String standPrompt = promptName == null ? appname.replaceAll(" +", "") : promptName;
 
-		String standPrompt = appname + ": " + m.getPrompt();
-		String histIndex = Integer.toString(InputUtil.getHistory().size());
-		standPrompt += !historyEnabled ? "$ " : histIndex + "$ ";
+		if (modules.size() > 1) {
+			standPrompt += moduleSeparator + m.getName();
+		}
+
+		String sep = promptSeparator;
+		if (historyIndexDisplay) {
+			sep = " " + Integer.toString(InputUtil.getHistory().size()) + sep;
+		}
+		standPrompt += sep + " ";
 
 		return standPrompt;
 	}
@@ -85,7 +181,9 @@ public class ConsoleClient {
 		}
 
 		// generate standard help message
-		String message = "\n" + m.getName().toUpperCase() + " -- POSSIBLE COMMANDS";
+		String message = "\n";
+		message += modules.size() == 1 ? appname.toUpperCase() : m.getName().toUpperCase();
+		message += " -- POSSIBLE COMMANDS";
 		for (Command c : m.getCommands()) {
 			message += "\n'" + c.getDefaultReference() + "'";
 			message += "\n\t" + c.getDescription();
@@ -125,16 +223,21 @@ public class ConsoleClient {
 	private Module runModule(Module m) throws InterruptedException, IOException {
 		while (true) {
 
-			String prompt = getPrompt(m, historyEnabled);
+			String prompt = getPrompt(m);
+			ArrayList<String> references = m.getReferences();
+			for (Module other : modules) {
+				if (!other.equals(m)) {
+					references.add(other.getName());
+				}
+			}
 
-			String result = InputUtil.promptUserInput(m, prompt, historyEnabled);
+			String result = InputUtil.promptUserInput(references, prompt);
 			result = result.trim().replaceAll(" +", " ");
 			if (historyEnabled && result.length() > 0) {
 				InputUtil.addHistory(result);
 			}
 
 			String[] args = result.split(" ");
-
 			String reference = args[0];
 
 			// command-universal operations
