@@ -23,7 +23,7 @@ public class ExampleApp {
 		ArrayList<String> addParams = new ArrayList<>(); // create parameters
 		addParams.add("first number");
 		addParams.add("second number");
-		
+
 		AddCmdLogic addLogic = new AddCmdLogic(); // set up command logic
 		addLogic.setParams(addParams); // add parameters to the command logic
 		Command addCmd = new Command("add", "Adds 2 numbers together", addLogic); // set up command with logic
@@ -32,18 +32,10 @@ public class ExampleApp {
 		ArrayList<String> subtractParams = new ArrayList<>(); // create parameters
 		subtractParams.add("first number");
 		subtractParams.add("second number");
-		
-		// delete this later
-		ArrayList<String> succP = new ArrayList<>();
-		succP.add("deadass");
-		succP.add("b");
-		AddCmdLogic succLogic = new AddCmdLogic();
-		succLogic.setParams(succP);
-		Command succ = new Command("succ", "thiccccc", succLogic);
-		
+
 		SubtractCmdLogic subtractLogic = new SubtractCmdLogic(); // set up command logic
 		subtractLogic.setParams(subtractParams); // add parameters to the command logic
-		
+
 		Command subCmd = new Command("subtract", "Subtracts 2 numbers", subtractLogic); // set up command with logic
 		subCmd.addReference("sub"); // add alternate reference to command
 		subCmd.resetUsage("Usage: the same as above"); // edit usage with resetUsage() and appendUsage()
@@ -62,18 +54,30 @@ public class ExampleApp {
 		Module math = new Module("math");
 		math.addCommand(addCmd);
 		math.addCommand(subCmd);
-		math.addCommand(succ);
 
 		Module quiz = new Module("quiz");
 		quiz.addCommand(quizCmd);
 		quiz.addCommand(infoCmd);
-		quiz.appendHelpPage("\nWarning: the math quiz problems in this module are very advanced, so proceed with caution");
+		quiz.appendHelpPage(
+				"\nWarning: the math quiz problems in this module are very advanced, so proceed with caution");
 
-		// set up and run console application
-		ConsoleClient client = new ConsoleClient("ExampleEducationApp", math); // 'math' is the home module, so it will
-																				// come up when the program first runs
+		// set up console with home module 'math.' This means when the user runs the app, the 'math' module will be running.
+		ConsoleClient client = new ConsoleClient("Example Education App", math);
+		
+		// add the module 'quiz'
 		client.addModule(quiz);
+		
+		// enable arrow (history) and tab (possible command) toggling
 		client.setHistoryLoggingEnabled(true);
+		client.setTabToggleEnabled(true);
+		
+		// customize prompt
+		client.setHistoryIndexDisplayEnabled(true);
+		client.setPromptDisplayName("ExampleApp-v1.0");
+		client.setModuleSeparator("/");
+		client.setPromptSeparator(">");
+
+		// run the console client
 		client.runConsole();
 
 	}
