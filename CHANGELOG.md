@@ -1,6 +1,21 @@
 # Changelog
 
 ## Version 1.2
+### 1.2.1 - 2017-09-13
+- **Added**
+  - Ability to move the cursor forward and backward with the arrow keys
+  - Ability to use insert mode to add or delete characters
+  - History logs current characters
+  - Alert sounds when delete, tab, or history toggle is unable to produce a result (i.e., no matching commands, no chars to delete, etc)
+- **Removed**
+  - Terminal no longer switches mode for each character, now only switches based on line
+- **Issues**
+  - Reverse wrapping bug produced on terminals using [GNU Screen](https://www.gnu.org/software/screen/)
+  - Prompt sometimes flashes when adding or deleting characters in input mode
+  - Code is [ugly](https://github.com/pkelaita/JModule/commit/dceaa309e206a482869ff2a9ff003e12890fa665#diff-ae2f5be210dce89d38a1e35d41760f3dR320)
+  - Bugs that are only produced on some command prompts but not others (don't know what causes the difference)
+    - History logs current characters incorrently when they are produced using tab toggling
+    - In insert mode, first character's display on CLI gets briefly overwritten for the first input but the pushed back out correctly with the next input
 ### 1.2.0 - 2017-09-11
 - **Added**
   - Customizable prompt display

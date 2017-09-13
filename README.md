@@ -1,7 +1,19 @@
 # JModule
 JModule is a simple, lightweight API written to help people easily write clean, organized, and highly customizable command-line applications in Java.
 JModule works by running a console client containing multiple *modules*, each containing their own commands. The application
-user can switch between modules to access their commands and can view a customizable help page for each module. This design allows the developer to organize commands by functionality, leading to an cleaner flow and easier overall user experience. 
+user can switch between modules to access their commands and can view a customizable help page for each module. This design allows the developer to organize commands by functionality, leading to an cleaner flow and easier overall user experience.
+
+## Why JModule?
+JModule can be thought of a much more lightweight, automated alternative to other Java CLI design libraries. JModule's functions were designed with both the user and developer in mind, and it is the only API of its kind that writes apps with a modular design. JModule automates not only the proccess of making sure the console parses input correctly but the process of ensuring a clean user experience as well, leaving the developer with much more freedom to focus on the functions of their app.
+### Features
+  - Commands can be organized into modules
+  - A range of customizations that can be accessed through simple boolean functions
+  - JModule implements its own keylistener (not Java.awt), allowing for it to detect individual bytes passed through the command line.
+  - Tab completion, history toggling, and insert mode are all supported.
+  - Fully-fledged [example application](#example-app), [documentation](#documentation), and [usage guide](#writing-a-jmodule-application).
+
+As of the current version, JModule is optimized to run on *nix systems and does not yet support the windows command prompt. However, in future versions I plan to add Windows compatiblity.
+
 
 ## Getting started
 ### Setting up
@@ -36,9 +48,9 @@ When the user runs your app, they will now be able to toggle through their comma
 possible commands within the current module by using the 'tab' key.
 
 ### Customizable prompt
-JModule 1.2 also has a much more customizable CLI prompt. See the [Customizable CLI Prompt](#customizable-cli-prompt) section to take a look at the customization commands. These commands are also outlined in the [Example app](https://github.com/pkelaita/JModule/blob/master/examples/ExampleApp.java#L74) and in the documentation [here](https://cdn.rawgit.com/pkelaita/JModule/30d8966a/documentation/1.2/com/jModule/exec/ConsoleClient.html).
+JModule 1.2 also has a much more [customizable CLI prompt](#customizable-cli-prompt). These commands are also outlined in the [Example app](https://github.com/pkelaita/JModule/blob/master/examples/ExampleApp.java#L74) and in the documentation [here](https://cdn.rawgit.com/pkelaita/JModule/30d8966a/documentation/1.2/com/jModule/exec/ConsoleClient.html).
 
-To see the full list of changes implemented in version 1.2, consult the [Changelog](https://github.com/pkelaita/JModule/blob/master/CHANGELOG.md).
+To see the full list of changes implemented in version 1.2, consult the [Changelog](https://github.com/pkelaita/JModule/blob/master/CHANGELOG.md#version-12).
 &nbsp;
 
 &nbsp;
@@ -160,7 +172,7 @@ JModule also supports the ability to write non-modular apps. To do this, just th
 home module. The name of the module will not show up in the prompt and the help page will show the app name rather than the home module name.
 
 ### Customizable CLI prompt
-JModule supports the ability to customize the prompt that will be printed to the CLI for each command. As of 1.2.0, there are four possible prompt customization functions.
+JModule supports the ability to customize the prompt that will be printed to the CLI for each command. As of the current version, there are four possible prompt customization functions.
   - **Prompt display name** <br>
      By default, the prompt will begin with the specified app name, with its spaces removed. However, we can change this if we'd like. For example, we can change the app name of our example application to shorten the name and include the version.
      ```java
