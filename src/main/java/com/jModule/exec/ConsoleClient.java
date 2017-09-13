@@ -17,17 +17,19 @@ import com.jModule.util.InputUtil;
  * windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.2.0
+ * @version 1.2.1
  *
  */
 public class ConsoleClient {
 
 	private Module home;
 	private String appname;
+	private ArrayList<Module> modules = new ArrayList<>();
+	
+	// default values
 	private String promptSeparator = "$";
 	private String moduleSeparator = ": ";
 	private String promptName = null;
-	private ArrayList<Module> modules = new ArrayList<>();
 	private boolean historyEnabled = false;
 	private boolean historyIndexDisplay = false;
 

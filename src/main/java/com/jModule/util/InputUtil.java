@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * currently untested on Windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.2.0
+ * @version 1.2.1
  *
  */
 public class InputUtil {
@@ -22,9 +22,12 @@ public class InputUtil {
 	private final static byte RIGHT_SEQ = 67;
 	private final static byte LEFT_SEQ = 68;
 	private final static byte DELETE = 127;
+	private final static String ALERT = "\007";
 
 	private static boolean historyEnabled = false;
 	private static boolean tabToggleEnabled = false;
+
+	private static int position = 1;
 
 	public static void setHistoryEnabled(boolean enabled) {
 		historyEnabled = enabled;
@@ -82,8 +85,14 @@ public class InputUtil {
 	 *            user-given characters currently on the CLI
 	 * @param prompt
 	 *            module Prompt
+	 * @param cursorDiff
+	 *            the distance from the position of the cursor to the end of the
+	 *            String printed to the CLI
 	 */
-	public static void clearLine(ArrayList<Character> resultChars, String prompt) {
+	public static void clearLine(ArrayList<Character> resultChars, String prompt, int cursorDiff) {
+		for (int i = 0; i < cursorDiff; i++) {
+			resultChars.add(' ');
+		}
 		int[] lengths = new int[history.size() + 1];
 		for (int i = 0; i < history.size(); i++) {
 			lengths[i] = history.get(i).length();
@@ -118,11 +127,11 @@ public class InputUtil {
 		ArrayList<Character> result = new ArrayList<Character>();
 
 		// get args at history index
-		String histEntry = history.get(histIndex);
+		String histEntry = histIndex == -1 ? charListToString(resultChars) : history.get(histIndex);
 		result = stringToCharList(histEntry);
 
 		// print prompt and args at selected index
-		clearLine(resultChars, prompt);
+		clearLine(resultChars, prompt, 0);
 		for (char c : result) {
 			System.out.print(c);
 		}
@@ -131,9 +140,47 @@ public class InputUtil {
 	}
 
 	/**
+	 * Moves the cursor right or left based on the key pressed and the characters
+	 * already printed to the CLI
+	 * 
+	 * @param isLeft
+	 *            if true, move cursor left
+	 * @param resultChars
+	 *            characters printed to screen
+	 */
+	private static void moveCursor(boolean isLeft, ArrayList<Character> resultChars) {
+		String out;
+		if (isLeft) {
+			out = position == 1 ? ALERT : "\b";
+			position -= out == ALERT ? 0 : 1;
+		} else {
+			out = position == resultChars.size() + 1 ? ALERT : resultChars.get(position - 1).toString();
+			position += out == ALERT ? 0 : 1;
+		}
+		System.out.print(out);
+	}
+
+	/**
+	 * Moves the cursor back without affecting the global variable 'position'
+	 * 
+	 * @param numChars
+	 *            how far to move the cursor back
+	 */
+	private static void moveCursorBack(int numChars) {
+		for (int i = 0; i < numChars; i++) {
+			System.out.print("\b");
+		}
+	}
+
+	/**
 	 * Takes in user input and prints result of each character. Currently able to
 	 * process all standard chars plus 'enter' and 'backspace' keystrokes.
 	 * 
+	 * @param commandReferences
+	 *            possible references that can be toggled with the 'tab' key
+	 * @param prompt
+	 *            the first String to come up on the CLI to prompt the user for
+	 *            input
 	 * @return result of user input
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -153,9 +200,11 @@ public class InputUtil {
 		boolean replaced;
 
 		String temp = null;
-		ArrayList<Character> resultChars = new ArrayList<>();
+		ArrayList<Character> resultChars = new ArrayList<>(); // what will get printed and executed
+		ArrayList<Character> currentChars = new ArrayList<>(); // used for reprinting history
 
 		while (readNext) {
+			int numDeleted = 0;
 			deleted = false;
 			replaced = false;
 
@@ -177,11 +226,14 @@ public class InputUtil {
 							matching.add(reference);
 						}
 					}
+					if (matching.isEmpty()) {
+						System.out.print(ALERT);
+					}
 
 					// toggle through matching commands, wait for non-tab key and process result
 					while (matching.size() != 0) {
 						ArrayList<Character> tempChars = stringToCharList(temp);
-						clearLine(tempChars, prompt);
+						clearLine(tempChars, prompt, 0);
 
 						if (commandIndex >= matching.size()) {
 							commandIndex = 0;
@@ -192,9 +244,12 @@ public class InputUtil {
 						System.out.print(temp);
 						byte next = (byte) System.in.read();
 
-						resultChars.clear();
 						if (next != TAB) {
+							resultChars.clear();
+							currentChars.clear();
 							resultChars = stringToCharList(temp);
+							currentChars = stringToCharList(temp);
+							position = resultChars.size() + 1;
 							toggling = true;
 							curr = next;
 							break;
@@ -206,10 +261,19 @@ public class InputUtil {
 					break;
 				case DELETE:
 				case DELETE_NUMPAD:
+					numDeleted++;
 					deleted = true;
+					if (!currentChars.isEmpty()) {
+						currentChars.remove(currentChars.size() - 1);
+					}
 					break;
 				case ESCAPE:
 					byteSequence = true;
+					break;
+				default:
+					if (!byteSequence) {
+						currentChars.add((char) curr);
+					}
 				}
 			}
 
@@ -219,20 +283,28 @@ public class InputUtil {
 				case UP_SEQ:
 					if (historyEnabled && histIndex < history.size() - 1) {
 						histIndex++;
-						resultChars = toggleHistory(histIndex, prompt, resultChars);
+						resultChars = toggleHistory(histIndex, prompt, currentChars);
+						position = resultChars.size() + 1;
 						replaced = true;
+					} else if (historyEnabled) {
+						System.out.print(ALERT);
 					}
 					break;
 				case DOWN_SEQ:
-					if (historyEnabled && histIndex > 0) {
+					if (historyEnabled && histIndex > -1) {
 						histIndex--;
-						resultChars = toggleHistory(histIndex, prompt, resultChars);
+						resultChars = toggleHistory(histIndex, prompt, currentChars);
+						position = resultChars.size() + 1;
 						replaced = true;
+					} else if (historyEnabled) {
+						System.out.print(ALERT);
 					}
 					break;
 				case RIGHT_SEQ:
+					moveCursor(false, resultChars);
+					break;
 				case LEFT_SEQ:
-					// unused
+					moveCursor(true, resultChars);
 					break;
 				default:
 					endOfSequence = false;
@@ -242,17 +314,55 @@ public class InputUtil {
 				continue;
 			}
 
-			if (!replaced && curr != TAB) {
-				if (!deleted) {
-					resultChars.add((char) curr);
+			position = readNext ? position : 1;
+			boolean insertMode = position - 1 != resultChars.size() && position > 1;
+
+			// process result, set result and print to CLI accordingly. TODO make less ugly
+			if (!replaced && curr != TAB && readNext) {
+
+				if (!deleted) { // character has been added
+					resultChars.add(position - 1, (char) curr);
+					position = !readNext ? 1 : position + 1;
 					System.out.print(Character.toString((char) curr));
-				} else if (resultChars.size() > 0) {
-					resultChars.remove(resultChars.size() - 1);
-					System.out.print("\b \b");
+					if (insertMode) {
+
+						// move characters forward after inserted character
+						clearLine(resultChars, prompt, numDeleted);
+						System.out.print(charListToString(resultChars));
+						moveCursorBack(resultChars.size() + 1 - position);
+					}
+
+				} else if (resultChars.size() > 0 && position > 1) { // character has been deleted
+					resultChars.remove(position - 2);
+					position--;
+					if (insertMode) {
+
+						// copy characters over to a temporoary holder and append cursor position
+						ArrayList<Character> holder = new ArrayList<>();
+						for (char c : resultChars) {
+							holder.add(c);
+						}
+						for (int i = 0; i < resultChars.size() - position + 1; i++) {
+							holder.add(' ');
+							System.out.print(" ");
+						}
+
+						// reprint result and move cursor accordingly
+						clearLine(holder, prompt, resultChars.size() + 1 - position);
+						System.out.print(charListToString(resultChars));
+						moveCursorBack(resultChars.size() + 1 - position);
+						System.out.print(resultChars.get(position - 1) + "\b");
+
+					} else {
+						System.out.print("\b \b"); // non-insert mode
+					}
+				} else {
+					System.out.print(ALERT);
 				}
 			}
 		}
 
+		System.out.println();
 		ConsoleUtil.setTerminalRegularInput();
 		return charListToString(resultChars);
 	}
