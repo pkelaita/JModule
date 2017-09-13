@@ -48,7 +48,7 @@ When the user runs your app, they will now be able to toggle through their comma
 possible commands within the current module by using the 'tab' key.
 
 ### Customizable prompt
-JModule 1.2 also has a much more [customizable CLI prompt](#customizable-cli-prompt). These commands are also outlined in the [Example app](https://github.com/pkelaita/JModule/blob/master/examples/ExampleApp.java#L74) and in the documentation [here](https://cdn.rawgit.com/pkelaita/JModule/30d8966a/documentation/1.2/com/jModule/exec/ConsoleClient.html).
+JModule 1.2 also has a much more [customizable CLI prompt](#customizable-cli-prompt). These commands are also outlined in the Example app [here](https://github.com/pkelaita/JModule/blob/master/examples/ExampleApp.java#L143) and in the documentation [here](https://cdn.rawgit.com/pkelaita/JModule/30d8966a/documentation/1.2/com/jModule/exec/ConsoleClient.html).
 
 To see the full list of changes implemented in version 1.2, consult the [Changelog](https://github.com/pkelaita/JModule/blob/master/CHANGELOG.md#version-12).
 &nbsp;
