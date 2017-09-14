@@ -26,7 +26,7 @@ public class Test {
 		System.out.println("\nExecution:");
 
 		String[] arguments = { "A", "B", "C", };
-		c1.execute(arguments);
+		c1.run(arguments);
 
 	}
 }

@@ -27,7 +27,7 @@ public abstract class CommandLogic {
 	 * @param args
 	 * @return result of logic
 	 */
-	public abstract void runCommand(String[] args);
+	public abstract void execute(String[] args);
 
 	public String[] getParams() {
 		return params;

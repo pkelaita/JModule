@@ -1,5 +1,6 @@
 import java.util.Random;
 
+import com.jModule.def.BoundedCommand;
 import com.jModule.def.Command;
 import com.jModule.def.CommandLogic;
 import com.jModule.exec.ConsoleClient;
@@ -33,6 +34,24 @@ public class ExampleApp {
 			int a = Integer.parseInt(args[0]);
 			int b = Integer.parseInt(args[1]);
 			System.out.println("Difference: " + (a - b) + "\n");
+		} catch (NumberFormatException nfe) {
+			System.out.println("Invalid input!\n");
+		}
+	}
+
+	public static void multiply(String[] args) {
+		try {
+			int prod;
+			if (args.length == 0) {
+				prod = 0;
+			} else {
+				prod = 1;
+				for (String str : args) {
+					int fac = Integer.parseInt(str);
+					prod *= fac;
+				}
+			}
+			System.out.println("Product: " + prod + "\n");
 		} catch (NumberFormatException nfe) {
 			System.out.println("Invalid input!\n");
 		}
@@ -88,25 +107,21 @@ public class ExampleApp {
 
 		// 'add' - 2 parameters
 		Command addCmd = new Command("add", "Adds 2 numbers together",
-				new CommandLogic(new String[] {
-						"First number",
-						"Second Numer" }) {
+				new CommandLogic(new String[] { "First number", "Second number" }) {
 
 					@Override
-					public void runCommand(String[] args) {
+					public void execute(String[] args) {
 						add(args);
 					}
 
 				});
 
-		// 'subtract' - parameters
+		// 'subtract' - 2 parameters
 		Command subCmd = new Command("subtract", "Subtracts 2 numbers",
-				new CommandLogic(new String[] {
-						"First number",
-						"Second number" }) {
+				new CommandLogic(new String[] { "First number", "Second number" }) {
 
 					@Override
-					public void runCommand(String[] args) {
+					public void execute(String[] args) {
 						subtract(args);
 					}
 
@@ -115,11 +130,27 @@ public class ExampleApp {
 		subCmd.resetUsage("Usage: the same as above"); // edit usage info with resetUsage() and appendUsage()
 		subCmd.appendUsage("Call this command by typing either 'subtract' or alternatively, 'sub'");
 
+		// 'multiply' - this is an example of an bounded command that can have any number of parameters
+		// within a specified range
+		Command multCmd = new BoundedCommand("multiply", "Multiplies 2 or more numbers", new CommandLogic() {
+
+			@Override
+			public void execute(String[] args) {
+				multiply(args);
+
+			}
+
+			// in this instance, we set the mininum number of parameters to 2 and
+			// leave the maximum open
+		}, 2).setParamSummary(" <First number> <Factors> ...");
+		multCmd.addReference("mult");
+		multCmd.addReference("mul");
+
 		// 'quizme' - no parameters
 		Command quizCmd = new Command("quizme", "Tests your knowledge of math", new CommandLogic() {
 
 			@Override
-			public void runCommand(String[] args) {
+			public void execute(String[] args) {
 				quizme();
 			}
 		});
@@ -129,7 +160,7 @@ public class ExampleApp {
 		Command infoCmd = new Command("info", "Tells you your quiz performance record", new CommandLogic() {
 
 			@Override
-			public void runCommand(String[] args) {
+			public void execute(String[] args) {
 				printPerformance();
 			}
 
@@ -139,6 +170,7 @@ public class ExampleApp {
 		Module math = new Module("math");
 		math.addCommand(addCmd);
 		math.addCommand(subCmd);
+		math.addCommand(multCmd);
 
 		Module quiz = new Module("quiz");
 		quiz.addCommand(quizCmd);

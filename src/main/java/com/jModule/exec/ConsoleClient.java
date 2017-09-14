@@ -266,7 +266,7 @@ public class ConsoleClient {
 
 			for (Command cmd : cmds) {
 				if (reference.equals(cmd.getDefaultReference()) || cmd.getAltReferences().contains(reference)) {
-					cmd.execute(args);
+					cmd.run(args);
 					return m;
 				}
 			}

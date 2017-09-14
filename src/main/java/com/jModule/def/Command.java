@@ -27,6 +27,17 @@ public class Command {
 	private String usageAppend;
 	private String usageReset;
 	private CommandLogic logic;
+	
+	private int min = -1;
+	private int max = -1;
+	
+	protected void setMin(int min) {
+		this.min = min;
+	}
+	
+	protected void setMax(int max) {
+		this.max = max;
+	}
 
 	/**
 	 * Sets the name of the command function (for example, "find" or "grep") and
@@ -47,7 +58,19 @@ public class Command {
 	public String getName() {
 		return name;
 	}
+	
+	public ArrayList<String> getReferences() {
+		return references;
+	}
+	
+	public String getUsageReset() {
+		return usageReset;
+	}
 
+	public String getUsageAppend() {
+		return usageAppend;
+	}
+	
 	public String getDescription() {
 		return description;
 	}
@@ -126,12 +149,14 @@ public class Command {
 	 * 
 	 * @param args
 	 */
-	public void execute(String[] args) {
+	public void run(String[] args) {
 		int paramNum = params != null ? params.length : 0;
-		if (paramNum == args.length) {
-			logic.runCommand(args);
+		boolean illegalDefNum = paramNum != args.length && !(this instanceof IndefCommand);
+		boolean illegalBoundNum = (args.length < min || args.length > max) && this instanceof BoundedCommand;
+		if (illegalDefNum || illegalBoundNum) {
+			System.out.println(getUsage() + "\n");
 			return;
 		}
-		System.out.println(getUsage() + "\n");
+		logic.execute(args);
 	}
 }
