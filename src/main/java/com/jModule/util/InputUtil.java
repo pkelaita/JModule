@@ -3,27 +3,23 @@ package com.jModule.util;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.jModule.util.EscapeChar.*;
+
 /**
  * Utility class to process user input on *nix terminals. This class is
  * currently untested on Windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.2.1
+ * @version 1.2.2
  *
  */
 public class InputUtil {
-
-	private final static byte DELETE_NUMPAD = 8;
-	private final static byte TAB = 9;
-	private final static byte ENTER = 10;
-	private final static byte ESCAPE = 27;
-	private final static byte UP_SEQ = 65;
-	private final static byte DOWN_SEQ = 66;
-	private final static byte RIGHT_SEQ = 67;
-	private final static byte LEFT_SEQ = 68;
-	private final static byte DELETE = 127;
+	private InputUtil() {
+		throw new AssertionError();
+	}
+	
 	private final static String ALERT = "\007";
-
+	
 	private static boolean historyEnabled = false;
 	private static boolean tabToggleEnabled = false;
 

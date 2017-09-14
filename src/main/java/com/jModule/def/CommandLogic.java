@@ -1,7 +1,5 @@
 package com.jModule.def;
 
-import java.util.ArrayList;
-
 /**
  * Classes extending this class can define the logic for commands based on user
  * input, if given. You can also define the standard parameters for your command
@@ -9,12 +7,19 @@ import java.util.ArrayList;
  * command
  * 
  * @author Pierce Kelaita
- * @version 1.0.0
+ * @version 1.2.2
  *
  */
 public abstract class CommandLogic {
 
-	private ArrayList<String> params;
+	private String[] params;
+
+	public CommandLogic() {
+	}
+
+	public CommandLogic(String[] params) {
+		this.params = params;
+	}
 
 	/**
 	 * Overwrite this class to define the logic for a command.
@@ -24,11 +29,7 @@ public abstract class CommandLogic {
 	 */
 	public abstract void runCommand(String[] args);
 
-	public void setParams(ArrayList<String> params) {
-		this.params = params;
-	}
-
-	public ArrayList<String> getParams() {
+	public String[] getParams() {
 		return params;
 	}
 }

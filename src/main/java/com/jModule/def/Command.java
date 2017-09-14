@@ -1,6 +1,5 @@
 package com.jModule.def;
 
-import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +14,7 @@ import java.util.ArrayList;
  * consult the CommandLogic documentation
  * 
  * @author Pierce Kelaita
- * @version 1.2.0
+ * @version 1.2.2
  *
  */
 public class Command {
@@ -42,14 +41,7 @@ public class Command {
 		this.description = description;
 		this.logic = logic;
 		this.defaultReference = name.toLowerCase().replaceAll(" ", "");
-
-		List<String> paramList = logic.getParams();
-		if (paramList != null) {
-			params = new String[paramList.size()];
-			for (int i = 0; i < paramList.size(); i++) {
-				params[i] = paramList.get(i);
-			}
-		}
+		this.params = logic.getParams();
 	}
 
 	public String getName() {

@@ -12,9 +12,12 @@ import java.io.InputStream;
  * character) and regular input mode (reading input line by line)
  * 
  * @author Pierce Kelaita
- * @version 1.0.3
+ * @version 1.2.2
  */
 public class ConsoleUtil {
+	private ConsoleUtil() {
+		throw new AssertionError();
+	}
 
 	private static String ttyConfig;
 
