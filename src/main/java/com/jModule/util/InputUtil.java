@@ -14,12 +14,9 @@ import static com.jModule.util.EscapeChar.*;
  *
  */
 public class InputUtil {
-	private InputUtil() {
-		throw new AssertionError();
-	}
-	
+
 	private final static String ALERT = "\007";
-	
+
 	private static boolean historyEnabled = false;
 	private static boolean tabToggleEnabled = false;
 
@@ -86,6 +83,7 @@ public class InputUtil {
 	 *            String printed to the CLI
 	 */
 	public static void clearLine(ArrayList<Character> resultChars, String prompt, int cursorDiff) {
+		// TODO make runtime suck less
 		for (int i = 0; i < cursorDiff; i++) {
 			resultChars.add(' ');
 		}
@@ -311,46 +309,43 @@ public class InputUtil {
 			}
 
 			position = readNext ? position : 1;
-			boolean insertMode = position - 1 != resultChars.size() && position > 1;
+			boolean insertMode = position - 1 != resultChars.size();
 
 			// process result, set result and print to CLI accordingly. TODO make less ugly
 			if (!replaced && curr != TAB && readNext) {
 
-				if (!deleted) { // character has been added
+				if (!deleted) {
 					resultChars.add(position - 1, (char) curr);
 					position = !readNext ? 1 : position + 1;
 					System.out.print(Character.toString((char) curr));
+					
 					if (insertMode) {
-
-						// move characters forward after inserted character
 						clearLine(resultChars, prompt, numDeleted);
 						System.out.print(charListToString(resultChars));
 						moveCursorBack(resultChars.size() + 1 - position);
 					}
 
-				} else if (resultChars.size() > 0 && position > 1) { // character has been deleted
+				} else if (resultChars.size() > 0 && position > 1) {
 					resultChars.remove(position - 2);
 					position--;
 					if (insertMode) {
 
-						// copy characters over to a temporoary holder and append cursor position
-						ArrayList<Character> holder = new ArrayList<>();
+						ArrayList<Character> buffer = new ArrayList<>();
 						for (char c : resultChars) {
-							holder.add(c);
+							buffer.add(c);
 						}
 						for (int i = 0; i < resultChars.size() - position + 1; i++) {
-							holder.add(' ');
+							buffer.add(' ');
 							System.out.print(" ");
 						}
 
-						// reprint result and move cursor accordingly
-						clearLine(holder, prompt, resultChars.size() + 1 - position);
+						clearLine(buffer, prompt, resultChars.size() + 1 - position);
 						System.out.print(charListToString(resultChars));
 						moveCursorBack(resultChars.size() + 1 - position);
 						System.out.print(resultChars.get(position - 1) + "\b");
 
 					} else {
-						System.out.print("\b \b"); // non-insert mode
+						System.out.print("\b \b");
 					}
 				} else {
 					System.out.print(ALERT);
@@ -361,5 +356,9 @@ public class InputUtil {
 		System.out.println();
 		ConsoleUtil.setTerminalRegularInput();
 		return charListToString(resultChars);
+	}
+
+	private InputUtil() {
+		throw new AssertionError();
 	}
 }

@@ -15,9 +15,6 @@ import java.io.InputStream;
  * @version 1.2.2
  */
 public class ConsoleUtil {
-	private ConsoleUtil() {
-		throw new AssertionError();
-	}
 
 	private static String ttyConfig;
 
@@ -66,5 +63,9 @@ public class ConsoleUtil {
 
 		String result = new String(bout.toByteArray());
 		return result;
+	}
+	
+	private ConsoleUtil() {
+		throw new AssertionError();
 	}
 }

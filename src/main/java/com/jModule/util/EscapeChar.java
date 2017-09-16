@@ -5,12 +5,9 @@ package com.jModule.util;
  * InputUtil
  * 
  * @author Pierce Kelaita
- * @version 1.2.2
+ * @version 1.3.0
  */
 final class EscapeChar {
-	EscapeChar() {
-		throw new AssertionError();
-	}
 	final static byte DELETE_NUMPAD = 8;
 	final static byte TAB = 9;
 	final static byte ENTER = 10;
@@ -20,4 +17,8 @@ final class EscapeChar {
 	final static byte RIGHT_SEQ = 67;
 	final static byte LEFT_SEQ = 68;
 	final static byte DELETE = 127;
+
+	private EscapeChar() {
+		throw new AssertionError();
+	}
 }
