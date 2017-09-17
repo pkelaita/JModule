@@ -7,7 +7,7 @@ package com.jModule.util;
  * @author Pierce Kelaita
  * @version 1.3.0
  */
-final class EscapeChar {
+final class EscapeCharacter {
 	final static byte DELETE_NUMPAD = 8;
 	final static byte TAB = 9;
 	final static byte ENTER = 10;
@@ -18,7 +18,7 @@ final class EscapeChar {
 	final static byte LEFT_SEQ = 68;
 	final static byte DELETE = 127;
 
-	private EscapeChar() {
+	private EscapeCharacter() {
 		throw new AssertionError();
 	}
 }

@@ -25,7 +25,8 @@ public class ConsoleClient {
 	private Module home;
 	private String appname;
 	private ArrayList<Module> modules = new ArrayList<>();
-	
+	private ArrayList<Thread> shutdownHooks = new ArrayList<>();
+
 	// default values
 	private String promptSeparator = "$";
 	private String moduleSeparator = ": ";
@@ -51,14 +52,14 @@ public class ConsoleClient {
 	/**
 	 * Sets the character(s) that will come up at the end of the prompt on the CLI
 	 * to separate the prompt from the user input. By default, this separator is
-	 * "$". A space will automatically be printed after this separator on the CLI.
+	 * "$".
 	 * <P>
 	 * The following examples show two prompts with the same settings but different
 	 * prompt seprators:
 	 * <P>
 	 *
-	 * <code>AppName: module$</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- separator is set to
-	 * <code>"$"</code> (default setting) <br>
+	 * <code>AppName: module$</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- separator is
+	 * set to <code>"$"</code> (default setting) <br>
 	 * <code>AppName: module></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- separator is
 	 * set to <code>">"</code> <br>
 	 * <code>AppName: module ></code> &nbsp;&nbsp;&nbsp;- separator is set to
@@ -100,7 +101,7 @@ public class ConsoleClient {
 	 * @param historyEnabled
 	 *            if true, client will log command history
 	 */
-	public void setHistoryLoggingEnabled(boolean enabled) {
+	public void enableHistoryLogging(boolean enabled) {
 		this.historyEnabled = enabled;
 		InputUtil.setHistoryEnabled(enabled);
 	}
@@ -113,7 +114,7 @@ public class ConsoleClient {
 	 * @param enabled
 	 *            if true, client will display history index in prompt
 	 */
-	public void setHistoryIndexDisplayEnabled(boolean enabled) {
+	public void enableHistoryIndexDisplay(boolean enabled) {
 		if (!historyEnabled) {
 			throw new IllegalArgumentException(
 					"In order to enable history index display, console client must have history logging enabled!");
@@ -129,19 +130,42 @@ public class ConsoleClient {
 	 * @param historyEnabled
 	 *            if true, client will log command history
 	 */
-	public void setTabToggleEnabled(boolean enabled) {
+	public void enableTabCompletion(boolean enabled) {
 		InputUtil.setTabToggleEnabled(enabled);
 	}
 
 	/**
-	 * Sets the app name that will show on the prompt display. By default, this value
-	 * is null, and the prompt display shows the user-given app name with its spaces
-	 * removed.
+	 * Sets whether the client will trigger the system's default alert sound when
+	 * the user performs actions that cannot have a result. (For example, pressing
+	 * delete when there are no input characters on the line)
+	 * 
+	 * @param enabled
+	 *            if true, client will trigger system alerts
+	 */
+	public void enableAlerts(boolean enabled) {
+		InputUtil.setAlertsEnabled(enabled);
+	}
+
+	/**
+	 * Sets the app name that will show on the prompt display. By default, this
+	 * value is null, and the prompt display shows the user-given app name with its
+	 * spaces removed.
 	 * 
 	 * @param name
 	 */
 	public void setPromptDisplayName(String name) {
 		this.promptName = name;
+	}
+
+	/**
+	 * Adds a proccess to run when the app shuts down. Define your proccess by
+	 * overriding the method run() in java.lang.Thread.
+	 * 
+	 * @param onShutdown
+	 *            Thread containing process to run on shutdown
+	 */
+	public void addShutdownHook(Thread onShutdown) {
+		shutdownHooks.add(onShutdown);
 	}
 
 	/**
@@ -191,8 +215,9 @@ public class ConsoleClient {
 			message += "\n\t" + c.getDescription();
 			message += "\n\t" + c.getUsage().replaceAll("\n", "\n\t");
 		}
+		String str = modules.size() > 1 ? "current module" : "application";
 		message += "\n'help'";
-		message += "\n\t" + "Displays the help page for the current module.";
+		message += "\n\t" + "Displays the help page for the " + str;
 		message += "\n\tUsage: ~$ help\n";
 		if (modules.size() > 1) {
 			message += "\nType the name of another module to switch to that module:";
@@ -265,7 +290,7 @@ public class ConsoleClient {
 			ArrayList<Command> cmds = m.getCommands();
 
 			for (Command cmd : cmds) {
-				if (reference.equals(cmd.getDefaultReference()) || cmd.getAltReferences().contains(reference)) {
+				if (reference.equals(cmd.getDefaultReference()) || cmd.getReferences().contains(reference)) {
 					cmd.run(args);
 					return m;
 				}
@@ -301,6 +326,9 @@ public class ConsoleClient {
 	 * module
 	 */
 	public void runConsole() {
+		for (Thread e : shutdownHooks) {
+			Runtime.getRuntime().addShutdownHook(e);
+		}
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {

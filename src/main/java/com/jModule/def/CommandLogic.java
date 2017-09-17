@@ -1,5 +1,7 @@
 package com.jModule.def;
 
+import java.util.ArrayList;
+
 /**
  * Classes extending this class can define the logic for commands based on user
  * input, if given. You can also define the standard parameters for your command
@@ -7,12 +9,13 @@ package com.jModule.def;
  * command
  * 
  * @author Pierce Kelaita
- * @version 1.2.2
+ * @version 1.3.0
  *
  */
 public abstract class CommandLogic {
 
 	private String[] params;
+	private ArrayList<Option> options = new ArrayList<>();
 
 	public CommandLogic() {
 	}
@@ -21,8 +24,67 @@ public abstract class CommandLogic {
 		this.params = params;
 	}
 
+	public ArrayList<Option> getOptions() {
+		return options;
+	}
+
 	/**
-	 * Overwrite this class to define the logic for a command.
+	 * Use this method in an if-statement as such: <blockquote>
+	 * 
+	 * <pre>
+	 * <code>
+	 * {@literal @}Override
+	 * public void execute() {
+	 * ...
+	 * 	if (onOption('a')) {
+	 * 		{@literal /}{@literal /} behavior with option 'a'
+	 * 	}
+	 * 	if (onOption('b')) {
+	 * 		{@literal /}{@literal /} behavior with option 'b'
+	 * 	}
+	 * }
+	 * </code>
+	 * </pre>
+	 * 
+	 * </blockquote> to signify the execution of the command when different options
+	 * are called in addition to the command's parameters.
+	 * 
+	 * 
+	 * @param flag
+	 *            The option's one-character reference (Example: "-a" or "-b")
+	 * @return <code>true</code> if the option exists and is called either by its
+	 *         flag or one of its references, <code>false</code> otherwise.
+	 */
+	public boolean onOption(char flag) {
+		for (Option o : getOptions()) {
+			if (o.isCalled(flag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public CommandLogic addOption(Option t) {
+		if (options.isEmpty()) {
+			options.add(t);
+			return this;
+		}
+		ArrayList<Option> temp = new ArrayList<>();
+		for (Option alt : options) {
+			if (t.equals(alt) == null) {
+				temp.add(t);
+			} else {
+				throw new IllegalArgumentException("Duplicate references found: " + t.equals(alt));
+			}
+		}
+		for (Option tog : temp) {
+			options.add(tog);
+		}
+		return this;
+	}
+
+	/**
+	 * Override this method to define the logic for a command.
 	 * 
 	 * @param args
 	 * @return result of logic

@@ -3,6 +3,7 @@ import java.util.Random;
 import com.jModule.def.BoundedCommand;
 import com.jModule.def.Command;
 import com.jModule.def.CommandLogic;
+import com.jModule.def.Option;
 import com.jModule.exec.ConsoleClient;
 import com.jModule.exec.Module;
 
@@ -18,6 +19,7 @@ public class ExampleApp {
 
 	private static int correct = 0;
 	private static int incorrect = 0;
+	private static int attempts = 0;
 
 	public static void add(String[] args) {
 		try {
@@ -58,28 +60,21 @@ public class ExampleApp {
 	}
 
 	public static void quizme() {
+
 		boolean isAdd = new Random().nextBoolean();
-		String operation;
-		if (isAdd) {
-			operation = " + ";
-		} else {
-			operation = " - ";
-		}
+		String operation = isAdd ? " + " : " - ";
 
 		int a = new Random().nextInt(10);
 		int b = new Random().nextInt(10);
 		System.out.println("What is " + a + operation + b + "? ");
 
 		while (true) {
+			attempts++;
 			try {
-				int answer;
-				if (isAdd) {
-					answer = a + b;
-				} else {
-					answer = a - b;
-				}
-
+				
+				int answer = isAdd ? a + b : a - b;
 				int result = Integer.parseInt(System.console().readLine());
+				
 				if (answer == result) {
 					System.out.println("Correct\n");
 					correct++;
@@ -88,15 +83,12 @@ public class ExampleApp {
 					incorrect++;
 				}
 				break;
+				
 			} catch (NumberFormatException nfe) {
 				System.out.println("Invalid input!");
+				System.out.println("What is " + a + operation + b + "? ");
 			}
 		}
-	}
-
-	public static void printPerformance() {
-		System.out.println("Correct answers: " + correct);
-		System.out.println("Incorrect answers: " + incorrect + "\n");
 	}
 
 	public static void main(String[] args) {
@@ -107,7 +99,9 @@ public class ExampleApp {
 
 		// 'add' - 2 parameters
 		Command addCmd = new Command("add", "Adds 2 numbers together",
-				new CommandLogic(new String[] { "First number", "Second number" }) {
+				new CommandLogic(new String[] {
+						"First number",
+						"Second number" }) {
 
 					@Override
 					public void execute(String[] args) {
@@ -116,9 +110,12 @@ public class ExampleApp {
 
 				});
 
+		
 		// 'subtract' - 2 parameters
 		Command subCmd = new Command("subtract", "Subtracts 2 numbers",
-				new CommandLogic(new String[] { "First number", "Second number" }) {
+				new CommandLogic(new String[] {
+						"First number", 
+						"Second number" }) {
 
 					@Override
 					public void execute(String[] args) {
@@ -127,12 +124,31 @@ public class ExampleApp {
 
 				});
 		subCmd.addReference("sub"); // add alternate reference to this command
-		subCmd.resetUsage("Usage: the same as above"); // edit usage info with resetUsage() and appendUsage()
+		// edit usage info with resetUsage() and appendUsage()
+		subCmd.resetUsage("Usage: the same as above");
 		subCmd.appendUsage("Call this command by typing either 'subtract' or alternatively, 'sub'");
 
-		// 'multiply' - this is an example of an bounded command that can have any number of parameters
-		// within a specified range
-		Command multCmd = new BoundedCommand("multiply", "Multiplies 2 or more numbers", new CommandLogic() {
+		
+		/* 
+		 * 'multiply' - This is an example of an bounded command that can have any
+		 * number of parameters within a specified range. We can either leave the
+		 * range open by only specifying a minimum in the constructor as such:
+		 * 
+		 * BoundedCommmand(String name, String description, CommandLogic logic, int min)
+		 * 
+		 * or have the range closed by specifying both a minimum and a maximum:
+		 * 
+		 * BoundedCommmand(String name, String description, CommandLogic logic, int min, int max)
+		 * 
+		 * Note that in a bounded or indefinite command, the String[] params in the CommandLogic
+		 * constructor does not affect how the command runs, but only what shows in the command's
+		 * usage info.
+		 * 
+		 */
+		Command multCmd = new BoundedCommand("multiply", "Multiplies 2 or more numbers",
+				new CommandLogic(new String[] {
+						"First number",
+						"Factors..." }) {
 
 			@Override
 			public void execute(String[] args) {
@@ -142,10 +158,11 @@ public class ExampleApp {
 
 			// in this instance, we set the mininum number of parameters to 2 and
 			// leave the maximum open
-		}, 2).setParamSummary(" <First number> <Factors> ...");
+		}, 2);
 		multCmd.addReference("mult");
 		multCmd.addReference("mul");
 
+		
 		// 'quizme' - no parameters
 		Command quizCmd = new Command("quizme", "Tests your knowledge of math", new CommandLogic() {
 
@@ -153,18 +170,35 @@ public class ExampleApp {
 			public void execute(String[] args) {
 				quizme();
 			}
+
 		});
 		quizCmd.addReference("qm"); // add an alternative reference to this command
-
+		
+		
 		// 'info' - no parameters
 		Command infoCmd = new Command("info", "Tells you your quiz performance record", new CommandLogic() {
 
 			@Override
 			public void execute(String[] args) {
-				printPerformance();
+				System.out.println("Correct answers: " + correct);
+				System.out.println("Incorrect answers: " + incorrect);
+				
+				// define the behavior of the command when called with a specific option, signified by its flag
+				if (onOption('v')) {
+					System.out.println("Total attempts: " + attempts);
+				}
+				if (onOption('b')) {
+					System.out.println("Cracking open a [B]old one with the [B]oys");
+				}
+				System.out.println();
 			}
 
-		});
+		}.addOption(new Option('v', "Prints the total attempts, including invalid input")
+				.addReference("ver")
+				.addReference("verbose"))
+		 .addOption(new Option('b', "Memes")
+				.addReference("boys"))
+		);
 
 		// set up modules - useful for grouping commands of similar type together
 		Module math = new Module("math");
@@ -188,18 +222,30 @@ public class ExampleApp {
 		// add the module 'quiz'
 		client.addModule(quiz);
 
-		// enable arrow (history) and tab (possible command) toggling
-		client.setHistoryLoggingEnabled(true);
-		client.setTabToggleEnabled(true);
+		// enable history logging - toggle with up and down arrows
+		client.enableHistoryLogging(true);
+		
+		// enable showing the history index in the prompt (history logging must be enabled)
+		client.enableHistoryIndexDisplay(true);
+		
+		// enable tab completion
+		client.enableTabCompletion(true);
 
 		// customize prompt
-		client.setHistoryIndexDisplayEnabled(true);
 		client.setPromptDisplayName("ExampleApp-v1.0");
 		client.setModuleSeparator("/");
 		client.setPromptSeparator(">");
 
 		// print a welcome message
-		System.out.println("Welcome to the example app!\n\n");
+		System.out.println("\nWelcome to the example app!\n");
+		
+		// add a shutdown hook
+		client.addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				System.out.println("Goodbye!\n");
+			}
+		});
 
 		// run the console client
 		client.runConsole();

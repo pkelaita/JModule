@@ -1,40 +1,17 @@
 package com.jModule.def;
 
-public class IndefCommand extends Command {
-	
-	private String paramSummary = null;
+/**
+ * Represents a Command with an indefinite number of parameters. These commands
+ * can be called from the command line with any number of parameters, including
+ * zero.
+ * 
+ * @author Pierce Kelaita
+ * @version 1.3.0
+ */
+public class IndefiniteCommand extends Command {
 
-	public IndefCommand(String name, String description, CommandLogic logic) {
+	public IndefiniteCommand(String name, String description, CommandLogic logic) {
 		super(name, description, logic);
-	}
-	
-	public IndefCommand setParamSummary(String summary) {
-		this.paramSummary = summary;
-		return this;
-	}
-
-	@Override
-	public String getUsage() {
-		String summary = paramSummary == null ? " <Parameters> ..." : paramSummary;
-		
-		if (getUsageReset() != null) {
-			return getUsageReset();
-		}
-
-		// generate standard usage info
-		String usage = "Usage: ~$ " + getDefaultReference() + summary;
-		
-		if (getReferences() != null) {
-			for (String reference : getReferences()) {
-				usage += "\n       OR " + reference + " ~";
-			}
-		}
-
-		// append info
-		if (getUsageAppend() != null) {
-			usage += "\n" + getUsageAppend();
-		}
-		return usage;
 	}
 
 }

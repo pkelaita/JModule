@@ -14,12 +14,13 @@ import java.util.ArrayList;
  * consult the CommandLogic documentation
  * 
  * @author Pierce Kelaita
- * @version 1.2.2
+ * @version 1.3.0
  *
  */
 public class Command {
 
 	private ArrayList<String> references = new ArrayList<>();
+	private ArrayList<Option> options = new ArrayList<>();
 	private String[] params;
 	private String name;
 	private String description;
@@ -27,14 +28,14 @@ public class Command {
 	private String usageAppend;
 	private String usageReset;
 	private CommandLogic logic;
-	
+
 	private int min = -1;
 	private int max = -1;
-	
+
 	protected void setMin(int min) {
 		this.min = min;
 	}
-	
+
 	protected void setMax(int max) {
 		this.max = max;
 	}
@@ -45,7 +46,11 @@ public class Command {
 	 * based on the command's name
 	 * 
 	 * @param name
+	 *            Command name
+	 * @param description
+	 *            Command description
 	 * @param logic
+	 *            Command logic
 	 */
 	public Command(String name, String description, CommandLogic logic) {
 		this.name = name;
@@ -53,24 +58,13 @@ public class Command {
 		this.logic = logic;
 		this.defaultReference = name.toLowerCase().replaceAll(" ", "");
 		this.params = logic.getParams();
+		this.options = logic.getOptions();
 	}
 
 	public String getName() {
 		return name;
 	}
-	
-	public ArrayList<String> getReferences() {
-		return references;
-	}
-	
-	public String getUsageReset() {
-		return usageReset;
-	}
 
-	public String getUsageAppend() {
-		return usageAppend;
-	}
-	
 	public String getDescription() {
 		return description;
 	}
@@ -79,8 +73,16 @@ public class Command {
 		return defaultReference;
 	}
 
-	public ArrayList<String> getAltReferences() {
+	public ArrayList<String> getReferences() {
 		return references;
+	}
+
+	public String getUsageReset() {
+		return usageReset;
+	}
+
+	public String getUsageAppend() {
+		return usageAppend;
 	}
 
 	public void addReference(String reference) {
@@ -104,12 +106,20 @@ public class Command {
 				usage += " " + "<" + param + ">";
 			}
 		}
-		if (references != null) {
-			for (String reference : references) {
-				usage += "\n       OR " + reference;
-				if (params != null) {
-					usage += " ~";
+		for (String reference : references) {
+			usage += "\n       OR " + reference;
+			if (params != null) {
+				usage += " ~";
+			}
+		}
+		if (!options.isEmpty()) {
+			usage += "\nOptions:";
+			for (Option t : options) {
+				usage += "\n\t" + t.getFlag();
+				for (String reference : t.getReferences()) {
+					usage += ", " + reference;
 				}
+				usage += ": " + t.getDescription();
 			}
 		}
 
@@ -144,19 +154,46 @@ public class Command {
 		this.usageAppend = null;
 	}
 
+	public boolean hasOption(String reference) {
+		for (Option o : options) {
+			if (o.isReferencedBy(reference)) {
+				o.activate();
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Runs the command logic with the given arguments
 	 * 
 	 * @param args
 	 */
 	public void run(String[] args) {
-		int paramNum = params != null ? params.length : 0;
-		boolean illegalDefNum = paramNum != args.length && !(this instanceof IndefCommand);
-		boolean illegalBoundNum = (args.length < min || args.length > max) && this instanceof BoundedCommand;
-		if (illegalDefNum || illegalBoundNum) {
-			System.out.println(getUsage() + "\n");
-			return;
+		ArrayList<String> paramsPassed = new ArrayList<>();
+		boolean illegalOptions = false;
+		for (String arg : args) {
+			if (!arg.startsWith("-")) {
+				paramsPassed.add(arg);
+			} else {
+				if (!hasOption(arg)) {
+					illegalOptions = true;
+				}
+			}
 		}
-		logic.execute(args);
+
+		int paramNum = params != null ? params.length : 0;
+		boolean illegalDefNum = paramNum != paramsPassed.size() && !(this instanceof IndefiniteCommand);
+		boolean illegalBoundNum = (paramsPassed.size() < min || paramsPassed.size() > max)
+				&& this instanceof BoundedCommand;
+
+		if (illegalDefNum || illegalBoundNum || illegalOptions) {
+			System.out.println(getUsage() + "\n");
+		} else {
+			logic.execute(args);
+		}
+		for (Option o : options) {
+			o.reset();
+		}
 	}
 }

@@ -3,8 +3,6 @@ package com.jModule.util;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.jModule.util.EscapeChar.*;
-
 /**
  * Utility class to process user input on *nix terminals. This class is
  * currently untested on Windows terminals.
@@ -15,12 +13,11 @@ import static com.jModule.util.EscapeChar.*;
  */
 public class InputUtil {
 
-	private final static String ALERT = "\007";
-
+	private static int position = 1;
 	private static boolean historyEnabled = false;
 	private static boolean tabToggleEnabled = false;
-
-	private static int position = 1;
+	private static String ALERT = "";
+	private static ArrayList<String> history = new ArrayList<>();
 
 	public static void setHistoryEnabled(boolean enabled) {
 		historyEnabled = enabled;
@@ -29,8 +26,10 @@ public class InputUtil {
 	public static void setTabToggleEnabled(boolean enabled) {
 		tabToggleEnabled = enabled;
 	}
-
-	private static ArrayList<String> history = new ArrayList<>();
+	
+	public static void setAlertsEnabled(boolean enabled) {
+		ALERT = enabled ? "\007" : "";
+	}
 
 	public static ArrayList<String> getHistory() {
 		return history;
@@ -195,7 +194,7 @@ public class InputUtil {
 
 		String temp = null;
 		ArrayList<Character> resultChars = new ArrayList<>(); // what will get printed and executed
-		ArrayList<Character> currentChars = new ArrayList<>(); // used for reprinting history
+		ArrayList<Character> currentChars = new ArrayList<>(); // used for toggling back to unentered characters
 
 		while (readNext) {
 			int numDeleted = 0;
@@ -208,7 +207,7 @@ public class InputUtil {
 			while (toggling) {
 				toggling = false;
 				switch (curr) {
-				case TAB:
+				case EscapeCharacter.TAB:
 					if (!tabToggleEnabled) {
 						break;
 					}
@@ -238,7 +237,7 @@ public class InputUtil {
 						System.out.print(temp);
 						byte next = (byte) System.in.read();
 
-						if (next != TAB) {
+						if (next != EscapeCharacter.TAB) {
 							resultChars.clear();
 							currentChars.clear();
 							resultChars = stringToCharList(temp);
@@ -250,18 +249,18 @@ public class InputUtil {
 						}
 					}
 					break;
-				case ENTER:
+				case EscapeCharacter.ENTER:
 					readNext = false;
 					break;
-				case DELETE:
-				case DELETE_NUMPAD:
+				case EscapeCharacter.DELETE:
+				case EscapeCharacter.DELETE_NUMPAD:
 					numDeleted++;
 					deleted = true;
 					if (!currentChars.isEmpty()) {
 						currentChars.remove(currentChars.size() - 1);
 					}
 					break;
-				case ESCAPE:
+				case EscapeCharacter.ESCAPE:
 					byteSequence = true;
 					break;
 				default:
@@ -274,30 +273,36 @@ public class InputUtil {
 			if (byteSequence) {
 				boolean endOfSequence = true;
 				switch (curr) {
-				case UP_SEQ:
-					if (historyEnabled && histIndex < history.size() - 1) {
+				case EscapeCharacter.UP_SEQ:
+					if (!historyEnabled) {
+						break;
+					}
+					if (histIndex < history.size() - 1) {
 						histIndex++;
 						resultChars = toggleHistory(histIndex, prompt, currentChars);
 						position = resultChars.size() + 1;
 						replaced = true;
-					} else if (historyEnabled) {
-						System.out.print(ALERT);
+						break;
 					}
+					System.out.print(ALERT);
 					break;
-				case DOWN_SEQ:
+				case EscapeCharacter.DOWN_SEQ:
+					if (!historyEnabled) {
+						break;
+					}
 					if (historyEnabled && histIndex > -1) {
 						histIndex--;
 						resultChars = toggleHistory(histIndex, prompt, currentChars);
 						position = resultChars.size() + 1;
 						replaced = true;
-					} else if (historyEnabled) {
-						System.out.print(ALERT);
+						break;
 					}
+					System.out.print(ALERT);
 					break;
-				case RIGHT_SEQ:
+				case EscapeCharacter.RIGHT_SEQ:
 					moveCursor(false, resultChars);
 					break;
-				case LEFT_SEQ:
+				case EscapeCharacter.LEFT_SEQ:
 					moveCursor(true, resultChars);
 					break;
 				default:
@@ -312,13 +317,13 @@ public class InputUtil {
 			boolean insertMode = position - 1 != resultChars.size();
 
 			// process result, set result and print to CLI accordingly. TODO make less ugly
-			if (!replaced && curr != TAB && readNext) {
+			if (!replaced && curr != EscapeCharacter.TAB && readNext) {
 
 				if (!deleted) {
 					resultChars.add(position - 1, (char) curr);
 					position = !readNext ? 1 : position + 1;
 					System.out.print(Character.toString((char) curr));
-					
+
 					if (insertMode) {
 						clearLine(resultChars, prompt, numDeleted);
 						System.out.print(charListToString(resultChars));
