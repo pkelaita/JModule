@@ -19,7 +19,7 @@
   - More relevant documentation
 - **Issues**
   - Tab completion doesn't work with chained commands
-  - Chained commands not recognized when no space is present before `;`
+  - Chained commands not recognized when a space is present before `;`
   - Runtime for character replacement on CLI could be improved
   - Internal package [com.jModule.util](https://github.com/pkelaita/JModule/tree/master/src/main/java/com/jModule/util) visibile to API
 ## Version 1.2
