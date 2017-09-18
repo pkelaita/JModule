@@ -77,14 +77,29 @@ public class Command {
 		return references;
 	}
 
-	public String getUsageReset() {
+	protected String getUsageReset() {
 		return usageReset;
 	}
 
-	public String getUsageAppend() {
+	protected String getUsageAppend() {
 		return usageAppend;
 	}
 
+	private boolean activateExistingOption(String reference) {
+		for (Option o : options) {
+			if (o.isReferencedBy(reference)) {
+				o.activate();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Adds a possible reference to the command
+	 * 
+	 * @param reference
+	 */
 	public void addReference(String reference) {
 		references.add(reference);
 	}
@@ -92,7 +107,7 @@ public class Command {
 	/**
 	 * Gives the correct usage in a standard, user-friendly format
 	 * 
-	 * @return
+	 * @return usage statment
 	 */
 	public String getUsage() {
 		if (usageReset != null) {
@@ -152,16 +167,6 @@ public class Command {
 	public void resetUsage(String reset) {
 		this.usageReset = reset;
 		this.usageAppend = null;
-	}
-
-	public boolean activateExistingOption(String reference) {
-		for (Option o : options) {
-			if (o.isReferencedBy(reference)) {
-				o.activate();
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

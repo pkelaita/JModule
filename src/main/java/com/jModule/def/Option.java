@@ -3,7 +3,10 @@ package com.jModule.def;
 import java.util.ArrayList;
 
 /**
- * Represents an optional toggle for a command.
+ * Represents an option that affects a command's behavior. These are, by nature,
+ * optional and do not count as a parameter of a command. Each option is called
+ * by a unique single-char flag, signified by a dash (for example, {@code -v}).
+ * 
  * 
  * @author Pierce Kelaita
  * @version 1.3.0
@@ -21,11 +24,6 @@ public class Option {
 		active = false;
 	}
 
-	public Option addReference(String reference) {
-		refs.add("--" + reference);
-		return this;
-	}
-
 	public ArrayList<String> getReferences() {
 		return refs;
 	}
@@ -33,16 +31,16 @@ public class Option {
 	public String getFlag() {
 		return flag;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
-	public boolean isCalled(char flag) {
+
+	protected boolean isCalled(char flag) {
 		return flag == this.flag.charAt(1) && active;
 	}
-	
-	public boolean isReferencedBy(String arg) {
+
+	protected boolean isReferencedBy(String arg) {
 		if (arg.equals(flag)) {
 			return true;
 		}
@@ -51,16 +49,16 @@ public class Option {
 		}
 		return false;
 	}
-	
-	public void activate() {
+
+	protected void activate() {
 		active = true;
 	}
-	
-	public void reset() {
+
+	protected void reset() {
 		active = false;
 	}
 
-	public String equals(Option t) {
+	protected String equals(Option t) {
 		if (t.getFlag().equals(flag)) {
 			return flag;
 		}
@@ -70,6 +68,19 @@ public class Option {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Adds a possible reference to the option. References are signaled by a double
+	 * dash and can be multiple characters (for example, {@code --verbose}).
+	 * 
+	 * @param reference
+	 *            String to reference option
+	 * @return Instance of this option with added reference
+	 */
+	public Option addReference(String reference) {
+		refs.add("--" + reference);
+		return this;
 	}
 
 }

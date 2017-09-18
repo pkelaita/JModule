@@ -39,13 +39,6 @@ public class InputUtil {
 		history.add(0, entry);
 	}
 
-	/**
-	 * Converts a String to an ArrayList of chars
-	 * 
-	 * @param str
-	 *            String to be converted
-	 * @return str as ArrayList
-	 */
 	private static ArrayList<Character> stringToCharList(String str) {
 		ArrayList<Character> result = new ArrayList<>();
 		for (int i = 0; str != null && i < str.length(); i++) {
@@ -54,13 +47,6 @@ public class InputUtil {
 		return result;
 	}
 
-	/**
-	 * Converts an ArrayList of chars to a string
-	 * 
-	 * @param list
-	 *            ArrayList to be converted
-	 * @return list as String
-	 */
 	private static String charListToString(ArrayList<Character> list) {
 		String result = "";
 		for (char c : list) {
@@ -81,7 +67,7 @@ public class InputUtil {
 	 *            the distance from the position of the cursor to the end of the
 	 *            String printed to the CLI
 	 */
-	public static void clearLine(ArrayList<Character> resultChars, String prompt, int cursorDiff) {
+	private static void clearLine(ArrayList<Character> resultChars, String prompt, int cursorDiff) {
 		// TODO make runtime suck less
 		for (int i = 0; i < cursorDiff; i++) {
 			resultChars.add(' ');

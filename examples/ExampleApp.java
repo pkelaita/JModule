@@ -21,7 +21,7 @@ public class ExampleApp {
 	private static int incorrect = 0;
 	private static int attempts = 0;
 
-	public static void add(String[] args) {
+	private static void add(String[] args) {
 		try {
 			int a = Integer.parseInt(args[0]);
 			int b = Integer.parseInt(args[1]);
@@ -31,7 +31,7 @@ public class ExampleApp {
 		}
 	}
 
-	public static void subtract(String[] args) {
+	private static void subtract(String[] args) {
 		try {
 			int a = Integer.parseInt(args[0]);
 			int b = Integer.parseInt(args[1]);
@@ -41,7 +41,7 @@ public class ExampleApp {
 		}
 	}
 
-	public static void multiply(String[] args) {
+	private static void multiply(String[] args) {
 		try {
 			int prod;
 			if (args.length == 0) {
@@ -59,7 +59,7 @@ public class ExampleApp {
 		}
 	}
 
-	public static void quizme() {
+	private static void quizme() {
 
 		boolean isAdd = new Random().nextBoolean();
 		String operation = isAdd ? " + " : " - ";

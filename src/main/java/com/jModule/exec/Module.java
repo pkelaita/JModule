@@ -36,11 +36,11 @@ public class Module {
 		return commands;
 	}
 
-	public String getHelpAppend() {
+	protected String getHelpAppend() {
 		return helpAppend;
 	}
 
-	public String getHelpReset() {
+	protected String getHelpReset() {
 		return helpReset;
 	}
 

@@ -185,7 +185,7 @@ public class ConsoleClient {
 
 		String sep = promptSeparator;
 		if (historyIndexDisplay) {
-			sep = " " + Integer.toString(InputUtil.getHistory().size()) + sep;
+			sep = " " + InputUtil.getHistory().size() + sep;
 		}
 		standPrompt += sep + " ";
 
@@ -249,7 +249,7 @@ public class ConsoleClient {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public Module processUserInput(Module m, String[] args) throws IOException, InterruptedException {
+	private Module processUserInput(Module m, String[] args) throws IOException, InterruptedException {
 
 		ArrayList<String[]> inputs = new ArrayList<>();
 		ArrayList<String> execList = new ArrayList<>();
@@ -290,7 +290,7 @@ public class ConsoleClient {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public Module processSingleInput(Module m, String[] args) throws IOException, InterruptedException {
+	private Module processSingleInput(Module m, String[] args) throws IOException, InterruptedException {
 
 		String reference = args[0];
 
