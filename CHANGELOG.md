@@ -1,5 +1,27 @@
 # Changelog
 
+## Version 1.3
+### 1.3.0 - 2017-09-18
+- **Added**
+  - Indefinite and bounded commands
+  - Options
+  - Chained commands
+  - Params can be defined in commandLogic constructor
+- **Removed**
+  - Params defined as an ArrayList
+  - Old tests, actual JUnit tests to be implemented later
+- **Fixed**
+  - Visibility issues with API
+  - Bug with the first character in insert mode
+  - Current characters incorrectly logged when using tab toggling
+  - Parsing and execution runtime is faster
+  - Encapsulation of ASCII escape characters
+  - More relevant documentation
+- **Issues**
+  - Tab completion doesn't work with chained commands
+  - Chained commands not recognized when no space is present before `;`
+  - Runtime for character replacement on CLI could be improved
+  - Internal package [com.jModule.util](https://github.com/pkelaita/JModule/tree/master/src/main/java/com/jModule/util) visibile to API
 ## Version 1.2
 ### 1.2.1 - 2017-09-13
 - **Added**
