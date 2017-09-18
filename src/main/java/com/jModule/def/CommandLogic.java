@@ -51,10 +51,10 @@ public abstract class CommandLogic {
 	 * public void execute() {
 	 * ...
 	 * 	if (onOption('a')) {
-	 * 		{@literal /}{@literal /} behavior with option 'a'
+	 * 		{@literal //} behavior with option 'a'
 	 * 	}
 	 * 	if (onOption('b')) {
-	 * 		{@literal /}{@literal /} behavior with option 'b'
+	 * 		{@literal //} behavior with option 'b'
 	 * 	}
 	 * }
 	 * </code>
