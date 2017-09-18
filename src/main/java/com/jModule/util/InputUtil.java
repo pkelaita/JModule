@@ -15,7 +15,7 @@ public class InputUtil {
 
 	private static int position = 1;
 	private static boolean historyEnabled = false;
-	private static boolean tabToggleEnabled = false;
+	private static boolean tabCompletionEnabled = false;
 	private static String ALERT = "";
 	private static ArrayList<String> history = new ArrayList<>();
 
@@ -23,8 +23,8 @@ public class InputUtil {
 		historyEnabled = enabled;
 	}
 
-	public static void setTabToggleEnabled(boolean enabled) {
-		tabToggleEnabled = enabled;
+	public static void setTabCompletionEnabled(boolean enabled) {
+		tabCompletionEnabled = enabled;
 	}
 	
 	public static void setAlertsEnabled(boolean enabled) {
@@ -208,7 +208,7 @@ public class InputUtil {
 				toggling = false;
 				switch (curr) {
 				case EscapeCharacter.TAB:
-					if (!tabToggleEnabled) {
+					if (!tabCompletionEnabled) {
 						break;
 					}
 					// grab matching commands based on user input
@@ -252,8 +252,8 @@ public class InputUtil {
 				case EscapeCharacter.ENTER:
 					readNext = false;
 					break;
-				case EscapeCharacter.DELETE:
 				case EscapeCharacter.DELETE_NUMPAD:
+				case EscapeCharacter.DELETE:
 					numDeleted++;
 					deleted = true;
 					if (!currentChars.isEmpty()) {

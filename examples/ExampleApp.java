@@ -174,7 +174,6 @@ public class ExampleApp {
 		});
 		quizCmd.addReference("qm"); // add an alternative reference to this command
 		
-		
 		// 'info' - no parameters
 		Command infoCmd = new Command("info", "Tells you your quiz performance record", new CommandLogic() {
 
@@ -209,7 +208,7 @@ public class ExampleApp {
 		Module quiz = new Module("quiz");
 		quiz.addCommand(quizCmd);
 		quiz.addCommand(infoCmd);
-
+		
 		// append help page - this message will now show at the bottom of the help page
 		// for the 'quiz' module
 		quiz.appendHelpPage(
@@ -222,6 +221,8 @@ public class ExampleApp {
 		// add the module 'quiz'
 		client.addModule(quiz);
 
+		// Enable useful functions in the console - they are all set to false by default
+
 		// enable history logging - toggle with up and down arrows
 		client.enableHistoryLogging(true);
 		
@@ -230,6 +231,9 @@ public class ExampleApp {
 		
 		// enable tab completion
 		client.enableTabCompletion(true);
+		
+		// enable alerts
+		client.enableAlerts(true);
 
 		// customize prompt
 		client.setPromptDisplayName("ExampleApp-v1.0");

@@ -154,7 +154,7 @@ public class Command {
 		this.usageAppend = null;
 	}
 
-	public boolean hasOption(String reference) {
+	public boolean activateExistingOption(String reference) {
 		for (Option o : options) {
 			if (o.isReferencedBy(reference)) {
 				o.activate();
@@ -168,6 +168,7 @@ public class Command {
 	 * Runs the command logic with the given arguments
 	 * 
 	 * @param args
+	 *            Command-line arguments
 	 */
 	public void run(String[] args) {
 		ArrayList<String> paramsPassed = new ArrayList<>();
@@ -176,7 +177,13 @@ public class Command {
 			if (!arg.startsWith("-")) {
 				paramsPassed.add(arg);
 			} else {
-				if (!hasOption(arg)) {
+				if (arg.charAt(1) != '-') {
+					for (int i = 1; i < arg.length(); i++) {
+						if (!activateExistingOption("-" + arg.charAt(i))) {
+							illegalOptions = true;
+						}
+					}
+				} else if (!activateExistingOption(arg)) {
 					illegalOptions = true;
 				}
 			}

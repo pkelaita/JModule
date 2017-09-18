@@ -131,7 +131,7 @@ public class ConsoleClient {
 	 *            if true, client will log command history
 	 */
 	public void enableTabCompletion(boolean enabled) {
-		InputUtil.setTabToggleEnabled(enabled);
+		InputUtil.setTabCompletionEnabled(enabled);
 	}
 
 	/**
@@ -238,6 +238,96 @@ public class ConsoleClient {
 	}
 
 	/**
+	 * Entry point for user input after being parsed by InputUtil. Checks if
+	 * commands are chained and executes accordingly.
+	 * 
+	 * @param m
+	 *            Current module
+	 * @param args
+	 *            All arguments on the current line
+	 * @return Output module of final argument
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public Module processUserInput(Module m, String[] args) throws IOException, InterruptedException {
+
+		ArrayList<String[]> inputs = new ArrayList<>();
+		ArrayList<String> execList = new ArrayList<>();
+		for (int i = 0; i < args.length; i++) {
+			boolean last = i == args.length - 1;
+
+			String arg = args[i];
+			if (!arg.endsWith(";") && !last) {
+				execList.add(arg);
+			} else {
+				arg = !last ? arg.substring(0, arg.length() - 1) : arg;
+				execList.add(arg);
+				String[] exec = new String[execList.size()];
+				for (int j = 0; j < execList.size() && execList.get(j) != null; j++) {
+					exec[j] = execList.get(j);
+				}
+				inputs.add(exec);
+				execList.clear();
+			}
+		}
+
+		for (String[] exec : inputs) {
+			m = processSingleInput(m, exec);
+		}
+
+		return m;
+	}
+
+	/**
+	 * Processes a single element of a chain of commands with respect to the current
+	 * module.
+	 * 
+	 * @param m
+	 *            Current module
+	 * @param args
+	 *            Arguments in single element of chain
+	 * @return Output module
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public Module processSingleInput(Module m, String[] args) throws IOException, InterruptedException {
+
+		String reference = args[0];
+
+		// command-universal operations
+		switch (reference) {
+		case "":
+			return m;
+		case "help":
+			printHelpMessage(m);
+			return m;
+		case "exit":
+			ConsoleUtil.setTerminalRegularInput();
+			System.exit(0);
+		}
+
+		for (Module switchTo : modules) {
+			if (reference.equals(switchTo.getName()) && !reference.equals(m.getName())) {
+				System.out.println("Switched to module '" + switchTo.getName() + "'\n");
+				return switchTo;
+			}
+		}
+
+		args = Arrays.copyOfRange(args, 1, args.length);
+		ArrayList<Command> cmds = m.getCommands();
+
+		for (Command cmd : cmds) {
+			if (reference.equals(cmd.getDefaultReference()) || cmd.getReferences().contains(reference)) {
+				cmd.run(args);
+				return m;
+			}
+		}
+		System.out
+				.println("Command '" + reference + "' not recognized. Use the 'help' command for details on usage.\n");
+		return m;
+	}
+
+	/**
 	 * Finds the command in the module that matches user-given input, and executes
 	 * that command with given arguments, if any
 	 * 
@@ -265,38 +355,7 @@ public class ConsoleClient {
 			}
 
 			String[] args = result.split(" ");
-			String reference = args[0];
-
-			// command-universal operations
-			switch (reference) {
-			case "":
-				continue;
-			case "help":
-				printHelpMessage(m);
-				continue;
-			case "exit":
-				ConsoleUtil.setTerminalRegularInput();
-				System.exit(0);
-			}
-
-			for (Module switchTo : modules) {
-				if (reference.equals(switchTo.getName()) && !reference.equals(m.getName())) {
-					System.out.println("Switched to module '" + switchTo.getName() + "'\n");
-					return switchTo;
-				}
-			}
-
-			args = Arrays.copyOfRange(args, 1, args.length);
-			ArrayList<Command> cmds = m.getCommands();
-
-			for (Command cmd : cmds) {
-				if (reference.equals(cmd.getDefaultReference()) || cmd.getReferences().contains(reference)) {
-					cmd.run(args);
-					return m;
-				}
-			}
-			System.out.println(
-					"Command '" + reference + "' not recognized. Use the 'help' command for details on usage.\n");
+			return processUserInput(m, args);
 		}
 	}
 

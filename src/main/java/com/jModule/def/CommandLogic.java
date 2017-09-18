@@ -1,6 +1,8 @@
 package com.jModule.def;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Classes extending this class can define the logic for commands based on user
@@ -27,6 +29,18 @@ public abstract class CommandLogic {
 	public ArrayList<Option> getOptions() {
 		return options;
 	}
+
+	public String[] getParams() {
+		return params;
+	}
+
+	/**
+	 * Override this method to define the logic for a command.
+	 * 
+	 * @param args
+	 *            Command-line arguments
+	 */
+	public abstract void execute(String[] args);
 
 	/**
 	 * Use this method in an if-statement as such: <blockquote>
@@ -64,12 +78,19 @@ public abstract class CommandLogic {
 		return false;
 	}
 
+	/**
+	 * Adds a possible option to the command.
+	 * 
+	 * @param t
+	 *            Default flag to call the option
+	 * @return This instance of CommandLogic
+	 */
 	public CommandLogic addOption(Option t) {
 		if (options.isEmpty()) {
 			options.add(t);
 			return this;
 		}
-		ArrayList<Option> temp = new ArrayList<>();
+		Set<Option> temp = new HashSet<Option>();
 		for (Option alt : options) {
 			if (t.equals(alt) == null) {
 				temp.add(t);
@@ -81,17 +102,5 @@ public abstract class CommandLogic {
 			options.add(tog);
 		}
 		return this;
-	}
-
-	/**
-	 * Override this method to define the logic for a command.
-	 * 
-	 * @param args
-	 * @return result of logic
-	 */
-	public abstract void execute(String[] args);
-
-	public String[] getParams() {
-		return params;
 	}
 }
