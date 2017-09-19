@@ -1,6 +1,9 @@
 # Changelog
 
 ## Version 1.3
+### 1.3.1 - 2017-09-19
+- **Fixed**
+  - Quick patch for bug with spaces in chained commands
 ### 1.3.0 - 2017-09-18
 - **Added**
   - Indefinite and bounded commands

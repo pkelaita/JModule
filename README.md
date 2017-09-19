@@ -15,7 +15,7 @@ user can switch between modules to access their commands and can view a customiz
   - JModule implements its own keylistener (not Java.awt), allowing for it to detect individual bytes passed through the command line.
   - Fully-fledged [example application](#example-app), [documentation](#documentation), and [usage guide](#writing-a-jmodule-application).
 
-As of the current version [v1.3.0](https://github.com/pkelaita/JModule/blob/master/CHANGELOG.md#130---2017-09-18), JModule is optimized to run on \*nix systems and does not yet support the windows command prompt. However, in future versions I plan to add Windows compatiblity.
+As of the current version [v1.3.1](https://github.com/pkelaita/JModule/blob/master/CHANGELOG.md#131---2017-09-19), JModule is optimized to run on \*nix systems and does not yet support the windows command prompt. However, in future versions I plan to add Windows compatiblity.
 
 
 ## Getting started
