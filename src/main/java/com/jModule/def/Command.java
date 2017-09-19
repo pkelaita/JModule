@@ -176,33 +176,40 @@ public class Command {
 	 *            Command-line arguments
 	 */
 	public void run(String[] args) {
-		ArrayList<String> paramsPassed = new ArrayList<>();
+		ArrayList<String> paramsPassedList = new ArrayList<>();
 		boolean illegalOptions = false;
 		for (String arg : args) {
-			if (!arg.startsWith("-")) {
-				paramsPassed.add(arg);
-			} else {
-				if (arg.charAt(1) != '-') {
-					for (int i = 1; i < arg.length(); i++) {
-						if (!activateExistingOption("-" + arg.charAt(i))) {
-							illegalOptions = true;
+			if (!arg.equals(";") && arg.length() > 0) { // weird bug fix
+				if (!arg.startsWith("-")) {
+					paramsPassedList.add(arg);
+				} else {
+					if (arg.charAt(1) != '-') {
+						for (int i = 1; i < arg.length(); i++) {
+							if (!activateExistingOption("-" + arg.charAt(i))) {
+								illegalOptions = true;
+							}
 						}
+					} else if (!activateExistingOption(arg)) {
+						illegalOptions = true;
 					}
-				} else if (!activateExistingOption(arg)) {
-					illegalOptions = true;
 				}
 			}
 		}
 
+		String[] paramsPassed = new String[paramsPassedList.size()];
+		for (int i = 0; i < paramsPassed.length; i++) {
+			paramsPassed[i] = paramsPassedList.get(i);
+		}
+
 		int paramNum = params != null ? params.length : 0;
-		boolean illegalDefNum = paramNum != paramsPassed.size() && !(this instanceof IndefiniteCommand);
-		boolean illegalBoundNum = (paramsPassed.size() < min || paramsPassed.size() > max)
+		boolean illegalDefNum = paramNum != paramsPassedList.size() && !(this instanceof IndefiniteCommand);
+		boolean illegalBoundNum = (paramsPassedList.size() < min || paramsPassedList.size() > max)
 				&& this instanceof BoundedCommand;
 
 		if (illegalDefNum || illegalBoundNum || illegalOptions) {
 			System.out.println(getUsage() + "\n");
 		} else {
-			logic.execute(args);
+			logic.execute(paramsPassed);
 		}
 		for (Option o : options) {
 			o.reset();

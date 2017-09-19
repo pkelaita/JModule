@@ -17,7 +17,7 @@ import com.jModule.util.InputUtil;
  * windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.2.1
+ * @version 1.3.1
  *
  */
 public class ConsoleClient {
