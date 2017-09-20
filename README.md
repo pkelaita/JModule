@@ -20,7 +20,7 @@ As of the current version [v1.3.1](https://github.com/pkelaita/JModule/blob/mast
 
 ## Getting started
 ### Setting up
-In order to use JModule, download the latest version of `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule's API is contained in two packages: [com.jmodule.def](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.3/index.html) (defining commands and parameters) and [com.jmodule.exec](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.3/index.html) (organization and execution of commands). The following classes are essential to use JModule
+In order to use JModule, download the latest version of `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule's API is contained in two packages: [com.jmodule.def](https://pkelaita.github.io/JModule/com/jmodule/def/package-summary.html) (defining commands and parameters) and [com.jmodule.exec](https://pkelaita.github.io/JModule/com/jmodule/exec/package-summary.html) (organization and execution of commands). The following classes are essential to use JModule
 ```java
 import com.jmodule.def.Command;
 import com.jmodule.def.CommandLogic;
@@ -346,7 +346,7 @@ and defines all its logic classes in the same file for readability.
 &nbsp;
 
 ## Documentation
-The source code Javadoc for JModule (as of version 1.3.0) can be found [here](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.3/index.html). I update the Javadoc with every major version release.
+The source code Javadoc for JModule (as of version 1.3.0) can be found [here](https://pkelaita.github.io/JModule/). I update the Javadoc with every major version release.
 #### Older versions
   - [1.2](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.2/index.html)
   - [1.1](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.1/index.html)
