@@ -1,4 +1,4 @@
-package com.jModule.def;
+package com.jmodule.def;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +11,7 @@ import java.util.Set;
  * command
  * 
  * @author Pierce Kelaita
- * @version 1.3.0
+ * @version 1.3.1
  *
  */
 public abstract class CommandLogic {

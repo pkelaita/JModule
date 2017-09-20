@@ -1,11 +1,11 @@
 import java.util.Random;
 
-import com.jModule.def.BoundedCommand;
-import com.jModule.def.Command;
-import com.jModule.def.CommandLogic;
-import com.jModule.def.Option;
-import com.jModule.exec.ConsoleClient;
-import com.jModule.exec.Module;
+import com.jmodule.def.BoundedCommand;
+import com.jmodule.def.Command;
+import com.jmodule.def.CommandLogic;
+import com.jmodule.def.Option;
+import com.jmodule.exec.ConsoleClient;
+import com.jmodule.exec.Module;
 
 /*
  * The classes in this file serve as an example of how to use the JModule API.

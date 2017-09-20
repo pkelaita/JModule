@@ -1,12 +1,12 @@
-package com.jModule.exec;
+package com.jmodule.exec;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.jModule.def.Command;
-import com.jModule.util.ConsoleUtil;
-import com.jModule.util.InputUtil;
+import com.jmodule.def.Command;
+import com.jmodule.util.ConsoleUtil;
+import com.jmodule.util.InputUtil;
 
 /**
  * Builds and runs a multi-module command line interface.

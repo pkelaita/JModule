@@ -1,11 +1,11 @@
-package com.jModule.util;
+package com.jmodule.util;
 
 /**
  * Defines ASCII bytes corresponding to characters that have special uses in
  * InputUtil
  * 
  * @author Pierce Kelaita
- * @version 1.3.0
+ * @version 1.3.1
  */
 final class EscapeCharacter {
 	final static byte DELETE_NUMPAD = 8;

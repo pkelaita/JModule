@@ -1,4 +1,4 @@
-package com.jModule.def;
+package com.jmodule.def;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * consult the CommandLogic documentation
  * 
  * @author Pierce Kelaita
- * @version 1.3.0
+ * @version 1.3.1
  *
  */
 public class Command {

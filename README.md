@@ -20,18 +20,18 @@ As of the current version [v1.3.1](https://github.com/pkelaita/JModule/blob/mast
 
 ## Getting started
 ### Setting up
-In order to use JModule, download the latest version of `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule's API is contained in two packages: [com.jModule.def](https://cdn.rawgit.com/pkelaita/JModule/c2f3b390/documentation/1.3/index.html) (defining commands and parameters) and [com.jModule.exec](https://cdn.rawgit.com/pkelaita/JModule/c2f3b390/documentation/1.3/index.html) (organization and execution of commands). The following classes are essential to use JModule
+In order to use JModule, download the latest version of `JModule.jar` from the [releases page](https://github.com/pkelaita/JModule/releases) and add the jar to your preferred classpath. JModule's API is contained in two packages: [com.jmodule.def](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.3/index.html) (defining commands and parameters) and [com.jmodule.exec](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.3/index.html) (organization and execution of commands). The following classes are essential to use JModule
 ```java
-import com.jModule.def.Command;
-import com.jModule.def.CommandLogic;
-import com.jModule.exec.ConsoleClient;
-import com.jModule.exec.Module;
+import com.jmodule.def.Command;
+import com.jmodule.def.CommandLogic;
+import com.jmodule.exec.ConsoleClient;
+import com.jmodule.exec.Module;
 ```
 The remaining classes are optional and add deeper functionality into the JModule API
 ```java
-import com.jModule.def.BoundedCommand;
-import com.jModule.def.IndefiniteCommand;
-import com.jModule.def.Option;
+import com.jmodule.def.BoundedCommand;
+import com.jmodule.def.IndefiniteCommand; 
+import com.jmodule.def.Option;
 ```
 ### Example App
 JModule includes an [Example Application](https://github.com/pkelaita/JModule/blob/master/examples/ExampleApp.java), which is a simple arithmetic program that utilizes most of the functionality in JModule's API. To get a feel for the flow of a JModule application, make sure you have JModule in your classpath, clone or download the file, compile the java file using `~$ javac ExampleApp.java` and run it with `~$ java ExampleApp`. The code is full of comments to help you understand JModule's functionality. Feel free to modify or use the example code as a reference for writing your own JModule applications.
@@ -346,11 +346,11 @@ and defines all its logic classes in the same file for readability.
 &nbsp;
 
 ## Documentation
-The source code Javadoc for JModule (as of version 1.3.0) can be found [here](https://cdn.rawgit.com/pkelaita/JModule/c2f3b390/documentation/1.3/index.html). I update the Javadoc with every major version release.
+The source code Javadoc for JModule (as of version 1.3.0) can be found [here](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.3/index.html). I update the Javadoc with every major version release.
 #### Older versions
-  - [1.2](https://cdn.rawgit.com/pkelaita/JModule/c2f3b390/documentation/1.2/index.html)
-  - [1.1](https://cdn.rawgit.com/pkelaita/JModule/c2f3b390/documentation/1.1/index.html)
-  - [1.0](https://cdn.rawgit.com/pkelaita/JModule/c2f3b390/documentation/1.0/index.html)
+  - [1.2](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.2/index.html)
+  - [1.1](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.1/index.html)
+  - [1.0](https://cdn.rawgit.com/pkelaita/JModule/af8ce0a8/documentation/1.0/index.html)
 &nbsp;
 
 &nbsp;

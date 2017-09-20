@@ -1,4 +1,4 @@
-package com.jModule.util;
+package com.jmodule.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * currently untested on Windows terminals.
  * 
  * @author Pierce Kelaita
- * @version 1.2.2
+ * @version 1.3.1
  *
  */
 public class InputUtil {

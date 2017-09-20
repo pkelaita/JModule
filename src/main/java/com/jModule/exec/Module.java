@@ -1,15 +1,15 @@
-package com.jModule.exec;
+package com.jmodule.exec;
 
 import java.util.ArrayList;
 
-import com.jModule.def.Command;
+import com.jmodule.def.Command;
 
 /**
  * Represents a module holding a group of possible commands relating to a
  * certain function
  * 
  * @author Pierce Kelaita
- * @version 1.2.0
+ * @version 1.3.1
  *
  */
 public class Module {

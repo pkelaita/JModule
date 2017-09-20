@@ -1,4 +1,4 @@
-package com.jModule.def;
+package com.jmodule.def;
 
 /**
  * Represents a command with a certain minimum and maximum number of parameters.
@@ -7,7 +7,7 @@ package com.jModule.def;
  * description, logic, min, max) to define both bounds of the range.
  * 
  * @author Pierce Kelaita
- * @version 1.3.0
+ * @version 1.3.1
  */
 public class BoundedCommand extends IndefiniteCommand {
 

@@ -1,4 +1,4 @@
-package com.jModule.util;
+package com.jmodule.util;
 
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +12,7 @@ import java.io.InputStream;
  * character) and regular input mode (reading input line by line)
  * 
  * @author Pierce Kelaita
- * @version 1.2.2
+ * @version 1.3.1
  */
 public class ConsoleUtil {
 
