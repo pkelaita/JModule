@@ -362,5 +362,3 @@ Thanks for checking out JModule! Feel free to contact me at <pierce@kelaita.com>
 &nbsp;
 
 &nbsp;
-
-<sub>UW CS accept me tho</sub>
